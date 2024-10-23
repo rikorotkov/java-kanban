@@ -3,19 +3,16 @@ package service;
 import model.Epic;
 import model.Subtask;
 import model.Task;
+import model.TaskStatus;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TaskManagerImpl implements TaskManager, SubtaskManager, EpicManager {
+public class TaskManagerImpl implements TaskManager {
     private ArrayList<Task> tasks;
-    private ArrayList<Epic> epics;
-    private ArrayList<Subtask> subtasks;
 
     public TaskManagerImpl() {
         tasks = new ArrayList<>();
-        epics = new ArrayList<>();
-        subtasks = new ArrayList<>();
     }
 
     @Override
@@ -41,10 +38,11 @@ public class TaskManagerImpl implements TaskManager, SubtaskManager, EpicManager
     }
 
     @Override
-    public Task updateTask(int id, String taskDescription, String taskName) {
+    public Task updateTask(int id, String taskDescription, String taskName, TaskStatus status) {
         Task task = findTaskById(id);
         task.setTaskDescription(taskDescription);
         task.setTaskName(taskName);
+        task.setTaskStatus(status);
         return task;
     }
 
@@ -70,134 +68,5 @@ public class TaskManagerImpl implements TaskManager, SubtaskManager, EpicManager
             }
         }
         return tasksByStatus;
-    }
-
-    @Override
-    public Epic createEpic(Epic epic) {
-        epics.add(epic);
-        System.out.println("Эпик " + epic.getTaskName() + " успешно создан");
-        return epic;
-    }
-
-    @Override
-    public List<Epic> getAllEpics() {
-        return epics;
-    }
-
-    @Override
-    public Epic findEpicById(int id) {
-        for (Epic epic : epics) {
-            if (epic.getId() == id) {
-                return epic;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Epic updateEpic(int id, String taskDescription, String taskName) {
-        Epic epic = findEpicById(id);
-        epic.setTaskDescription(taskDescription);
-        epic.setTaskName(taskName);
-        System.out.println("Эпик " + epic.getTaskName() + " обновлен");
-        return epic;
-    }
-
-    @Override
-    public void deleteEpic(int id) {
-        Epic epic = findEpicById(id);
-        epics.remove(epic);
-        System.out.println("Эпик " + epic.getTaskName() + " удален");
-    }
-
-    @Override
-    public void deleteAllEpics() {
-        epics.clear();
-        System.out.println("Список эпиков очищен");
-    }
-
-    @Override
-    public List<Epic> findEpicsByStatus(String status) {
-        for (Epic epic : epics) {
-            if (epic.getTaskStatus().equals(status)) {
-                return epics;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Subtask createSubtask(Subtask subtask) {
-        subtasks.add(subtask);
-        System.out.println("Подзадача " + subtask.getTaskName() + " была добавлена в эпик " + subtask.getEpicName(epics));
-        return subtask;
-    }
-
-    @Override
-    public List<Subtask> getAllSubtasks() {
-        return subtasks;
-    }
-
-    @Override
-    public List<Subtask> getSubtasksByEpicId(int id) {
-        ArrayList<Subtask> subtasksByEpic = new ArrayList<>();
-        for (Subtask subtask : subtasks) {
-            if (subtask.getEpicId() == id) {
-                subtasksByEpic.add(subtask);
-            }
-        }
-        return subtasksByEpic;
-    }
-
-    @Override
-    public Subtask findSubtaskById(int id) {
-        for (Subtask subtask : subtasks) {
-            if (subtask.getId() == id) {
-                return subtask;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Subtask updateSubtask(int id, String taskDescription, String taskName) {
-        Subtask subtask = findSubtaskById(id);
-        if (subtask != null) {
-            subtask.setTaskDescription(taskDescription);
-            subtask.setTaskName(taskName);
-            System.out.println("Подзадача " + subtask.getTaskName() + " обновлена");
-        }
-        return subtask;
-    }
-
-    @Override
-    public void deleteSubtaskInEpic(int id) {
-        // TODO
-    }
-
-    @Override
-    public void deleteSubtask(int id) {
-        Subtask subtask = findSubtaskById(id);
-        if (subtask != null) {
-            subtasks.remove(subtask);
-            System.out.println("Подзадача " + subtask.getTaskName() + " удалена");
-        }
-    }
-
-    @Override
-    public void deleteAllSubtasks() {
-        subtasks.clear();
-        System.out.println("Список подзадач очищен");
-    }
-
-    @Override
-    public List<Subtask> findSubtasksByStatus(String status) {
-        ArrayList<Subtask> subtasksByStatus = new ArrayList<>();
-        for (Subtask subtask : subtasks) {
-            if (subtask.getTaskStatus().toString().equalsIgnoreCase(status)) {
-                subtasksByStatus.add(subtask);
-            }
-        }
-        return subtasksByStatus;
     }
 }

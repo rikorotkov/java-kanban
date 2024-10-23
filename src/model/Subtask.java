@@ -22,4 +22,15 @@ public class Subtask extends Task {
         }
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "Subtask {" +
+                "id = " + super.getId() +
+                ", subtaskName = " + this.getTaskName() +
+                ", subtaskDescription = " + this.getTaskDescription() +
+                ", epicId=" + epicId +
+                " , taskStatus = " + this.getTaskStatus() +
+                '}';
+    }
 }

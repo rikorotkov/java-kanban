@@ -2,6 +2,7 @@ package service;
 
 import model.Epic;
 import model.Subtask;
+import model.TaskStatus;
 
 import java.util.List;
 
@@ -14,11 +15,9 @@ public interface SubtaskManager {
 
     Subtask findSubtaskById(int id);
 
-    Subtask updateSubtask(int id, String taskDescription, String taskName);
+    Subtask updateSubtask(int id, String taskDescription, String taskName, TaskStatus status);
 
     void deleteSubtask(int id);
-
-    void deleteSubtaskInEpic(int id);
 
     void deleteAllSubtasks();
 

@@ -1,6 +1,7 @@
 package service;
 
 import model.Task;
+import model.TaskStatus;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public interface TaskManager {
 
     Task findTaskById(int id);
 
-    Task updateTask(int id, String taskDescription, String taskName);
+    Task updateTask(int id, String taskDescription, String taskName, TaskStatus status);
 
     void deleteTask(int id);
 

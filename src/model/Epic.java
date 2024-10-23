@@ -10,11 +10,22 @@ public class Epic extends Task {
         this.subtasks = new ArrayList<>();
     }
 
+    public void addSubtask(Subtask subtask) {
+        subtasks.add(subtask);
+    }
+
+    public ArrayList<Subtask> getSubtasks() {
+        return subtasks;
+    }
+
     @Override
     public String toString() {
-        return "Epic{" +
-                "subtasks=" + subtasks +
-                "} " + super.toString() +
+        return "Epic {" +
+                "id = " + this.getId() +
+                ", epicName = '" + this.getTaskName() + '\'' +
+                ", epicDescription = '" + this.getTaskDescription() + '\'' +
+                ", subtasksCount = " + subtasks.size() +
+                ", status = " + this.getTaskStatus() +
                 '}';
     }
 }
