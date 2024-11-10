@@ -54,4 +54,6 @@ public interface TaskManager {
     void deleteAllSubtasks();
 
     List<Subtask> findSubtasksByStatus(String status);
+
+    List<Task> getHistory();
 }
