@@ -2,7 +2,7 @@ import model.Epic;
 import model.Subtask;
 import model.Task;
 import model.TaskStatus;
-import service.TaskManager;
+import service.InMemoryTaskManager;
 
 import java.util.logging.Logger;
 
@@ -10,7 +10,7 @@ public class Main {
 
     public static void main(String[] args) {
         Logger logger = Logger.getLogger(Main.class.getName());
-        TaskManager taskManager = new TaskManager(logger);
+        InMemoryTaskManager taskManager = new InMemoryTaskManager(logger);
 
         Task task1 = new Task("Закрыть дверь", "Дверь");
         Task task2 = new Task("Оплатить счет", "Счет");
