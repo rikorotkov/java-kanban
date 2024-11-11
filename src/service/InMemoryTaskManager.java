@@ -27,7 +27,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task createTask(Task task) {
         tasks.add(task);
-        logger.info("задача " + task.getTaskName() + " зарегистрирована");
+        logger.info("задача " + task.getTaskName() + " зарегистрирована. ID: " + task.getId());
         return task;
     }
 
