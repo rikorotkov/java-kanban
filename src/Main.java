@@ -2,15 +2,13 @@ import model.Epic;
 import model.Subtask;
 import model.Task;
 import model.TaskStatus;
-import service.InMemoryTaskManager;
-
-import java.util.logging.Logger;
+import service.Managers;
+import service.TaskManager;
 
 public class Main {
 
     public static void main(String[] args) {
-        Logger logger = Logger.getLogger(Main.class.getName());
-        InMemoryTaskManager taskManager = new InMemoryTaskManager(logger);
+        TaskManager taskManager = Managers.getDefault();
 
         Task task1 = new Task("Закрыть дверь", "Дверь");
         Task task2 = new Task("Оплатить счет", "Счет");
@@ -32,8 +30,8 @@ public class Main {
         taskManager.createSubtask(subtask2);
         taskManager.createSubtask(subtask3);
 
-        taskManager.updateSubtask(5,"Закрыть модуль 1", "Модуль 1", TaskStatus.DONE);
-        taskManager.updateSubtask(6,"Выучить теорию модуля 2", "Модуль 2", TaskStatus.DONE);
+        taskManager.updateSubtask(5, "Закрыть модуль 1", "Модуль 1", TaskStatus.DONE);
+        taskManager.updateSubtask(6, "Выучить теорию модуля 2", "Модуль 2", TaskStatus.DONE);
 //        taskManager.updateSubtask(7,"Сделать задание по модулю 3", "Модуль 3", TaskStatus.DONE);
 
         taskManager.updateEpicStatus(epic1);
