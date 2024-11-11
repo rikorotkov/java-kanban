@@ -2,8 +2,11 @@ import model.Epic;
 import model.Subtask;
 import model.Task;
 import model.TaskStatus;
+import service.HistoryManager;
 import service.Managers;
 import service.TaskManager;
+
+import java.util.List;
 
 public class Main {
 
@@ -39,5 +42,8 @@ public class Main {
         System.out.println(epic1.toString());
         System.out.println(subtask1.toString());
         System.out.println(task1.toString());
+
+        System.out.println("*".repeat(33));
+        System.out.println(taskManager.getHistory());
     }
 }

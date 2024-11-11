@@ -5,7 +5,6 @@ import model.Subtask;
 import model.Task;
 import model.TaskStatus;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
@@ -37,7 +36,7 @@ public interface TaskManager {
 
     void deleteAllEpics();
 
-    ArrayList<Epic> findEpicsByStatus(String status);
+    List<Epic> findEpicsByStatus(String status);
 
     Subtask createSubtask(Subtask subtask);
 
