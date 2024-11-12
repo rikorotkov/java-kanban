@@ -50,6 +50,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task updateTask(int id, String taskDescription, String taskName, TaskStatus status) {
         Task task = findTaskById(id);
+        if (task == null) {
+            throw new IllegalArgumentException("Задача с ID - " + id + "не найдена");
+        }
         task.setTaskDescription(taskDescription);
         task.setTaskName(taskName);
         task.setTaskStatus(status);
@@ -106,6 +109,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic updateEpic(int id, String taskDescription, String taskName) {
         Epic epic = findEpicById(id);
+        if (epic == null) {
+            throw new IllegalArgumentException("Эпик с ID - " + id + "не найден");
+        }
         epic.setTaskDescription(taskDescription);
         epic.setTaskName(taskName);
         logger.info("Эпик " + epic.getTaskName() + " обновлен");
@@ -209,6 +215,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Subtask updateSubtask(int id, String taskDescription, String taskName, TaskStatus status) {
         Subtask subtask = findSubtaskById(id);
+        if (subtask == null) {
+            throw new IllegalArgumentException("Подзадача с ID - " + id + "не найдена");
+        }
         Epic epic = findEpicById(subtask.getEpicId());
         if (subtask != null) {
             subtask.setTaskDescription(taskDescription);
