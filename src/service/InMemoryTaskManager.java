@@ -64,6 +64,7 @@ public class InMemoryTaskManager implements TaskManager {
         Task task = findTaskById(id);
         tasks.remove(task);
         logger.info("Задача удалена");
+        historyManager.remove(id);
     }
 
     @Override
@@ -150,6 +151,12 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = findEpicById(id);
         if (epic != null) {
             epics.remove(epic);
+            if (epic.getSubtasks() != null) {
+                for (Subtask subtask : epic.getSubtasks()) {
+                    historyManager.remove(subtask.getId());
+                }
+            }
+            historyManager.remove(id);
             subtasks.removeIf(subtask -> subtask.getEpicId() == id);
         }
         logger.info("Эпик " + epic.getTaskName() + " удален");
