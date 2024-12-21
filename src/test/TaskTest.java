@@ -52,4 +52,5 @@ class TaskTest {
         Task updateTask = taskManager.updateTask(task.getId(), "Новое описание задачи", "Новое имя задачи", TaskStatus.IN_PROGRESS);
         assertEquals(taskManager.findTaskById(task.getId()), updateTask);
     }
+
 }
