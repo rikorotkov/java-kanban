@@ -1,4 +1,4 @@
-package model;
+package com.praktikum.kanban.model;
 
 public enum TaskStatus {
     NEW,

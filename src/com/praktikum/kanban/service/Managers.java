@@ -1,4 +1,4 @@
-package service;
+package com.praktikum.kanban.service;
 
 import java.util.logging.Logger;
 

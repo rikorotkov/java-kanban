@@ -1,6 +1,8 @@
-import model.Task;
-import service.HistoryManager;
-import service.Managers;
+package com.praktikum.kanban;
+
+import com.praktikum.kanban.model.Task;
+import com.praktikum.kanban.service.HistoryManager;
+import com.praktikum.kanban.service.Managers;
 
 import java.util.logging.Logger;
 

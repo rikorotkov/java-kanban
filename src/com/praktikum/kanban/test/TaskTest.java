@@ -1,11 +1,11 @@
-package test;
+package com.praktikum.kanban.test;
 
-import model.Task;
-import model.TaskStatus;
+import com.praktikum.kanban.model.Task;
+import com.praktikum.kanban.model.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.Managers;
-import service.TaskManager;
+import com.praktikum.kanban.service.Managers;
+import com.praktikum.kanban.service.TaskManager;
 
 import java.util.List;
 

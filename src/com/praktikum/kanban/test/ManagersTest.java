@@ -1,9 +1,9 @@
-package test;
+package com.praktikum.kanban.test;
 
 import org.junit.jupiter.api.Test;
-import service.HistoryManager;
-import service.Managers;
-import service.TaskManager;
+import com.praktikum.kanban.service.HistoryManager;
+import com.praktikum.kanban.service.Managers;
+import com.praktikum.kanban.service.TaskManager;
 
 import static org.junit.jupiter.api.Assertions.*;
 

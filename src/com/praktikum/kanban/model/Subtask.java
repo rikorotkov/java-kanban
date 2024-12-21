@@ -1,4 +1,4 @@
-package model;
+package com.praktikum.kanban.model;
 
 import java.util.ArrayList;
 
