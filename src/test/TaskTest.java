@@ -1,4 +1,4 @@
-package com.praktikum.kanban.test;
+package test;
 
 import com.praktikum.kanban.model.Task;
 import com.praktikum.kanban.model.TaskStatus;

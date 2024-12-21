@@ -1,4 +1,4 @@
-package com.praktikum.kanban.test;
+package test;
 
 import com.praktikum.kanban.model.Epic;
 import com.praktikum.kanban.model.Subtask;
