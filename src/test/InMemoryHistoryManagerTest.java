@@ -1,14 +1,14 @@
-package test.com.praktikum.kanban;
+package test;
 
-import com.praktikum.kanban.model.Epic;
-import com.praktikum.kanban.model.Subtask;
-import com.praktikum.kanban.model.Task;
-import com.praktikum.kanban.model.TaskStatus;
+import model.Epic;
+import model.Subtask;
+import model.Task;
+import model.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import com.praktikum.kanban.service.HistoryManager;
-import com.praktikum.kanban.service.Managers;
-import com.praktikum.kanban.service.TaskManager;
+import service.HistoryManager;
+import service.Managers;
+import service.TaskManager;
 
 import java.util.List;
 

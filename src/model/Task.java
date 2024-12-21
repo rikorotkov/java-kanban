@@ -1,4 +1,4 @@
-package com.praktikum.kanban.model;
+package model;
 
 import java.util.Objects;
 

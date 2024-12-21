@@ -1,6 +1,6 @@
-package com.praktikum.kanban.service;
+package service;
 
-import com.praktikum.kanban.model.Task;
+import model.Task;
 
 import java.util.List;
 
