@@ -5,4 +5,15 @@ on:
 
 jobs:
   build:
-    uses: yandex-praktikum/java-kanban/.github/workflows/api-tests.yml@ci
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      - name: Compile and Run Tests
+        run: |
+          find ./src/test -type f -name "*.java" > tests.txt
+          javac -d out -cp ./out:./tests/lib/junit-platform-console-standalone-1.9.3.jar:./tests/lib/gson-2.10.1.jar @tests.txt
