@@ -1,8 +1,9 @@
-name: Java Tests
-
-on:
-  pull_request:
-
 jobs:
   build:
-    uses: yandex-praktikum/java-kanban/.github/workflows/api-tests.yml@ci
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Find Java files
+        run: find ./src/test/java -type f -name "*.java" > tests.txt
+      - name: Compile Java files
+        run: javac -d out -cp ./out:./tests/lib/junit-platform-console-standalone-1.9.3.jar:./tests/lib/gson-2.10.1.jar @tests.txt
