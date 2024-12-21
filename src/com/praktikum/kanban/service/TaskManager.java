@@ -1,9 +1,9 @@
-package service;
+package com.praktikum.kanban.service;
 
-import model.Epic;
-import model.Subtask;
-import model.Task;
-import model.TaskStatus;
+import com.praktikum.kanban.model.Epic;
+import com.praktikum.kanban.model.Subtask;
+import com.praktikum.kanban.model.Task;
+import com.praktikum.kanban.model.TaskStatus;
 
 import java.util.List;
 

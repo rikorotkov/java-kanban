@@ -1,11 +1,11 @@
 package test;
 
-import model.Epic;
-import model.Subtask;
+import com.praktikum.kanban.model.Epic;
+import com.praktikum.kanban.model.Subtask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.Managers;
-import service.TaskManager;
+import com.praktikum.kanban.service.Managers;
+import com.praktikum.kanban.service.TaskManager;
 
 import static org.junit.jupiter.api.Assertions.*;
 
