@@ -1,9 +1,20 @@
+name: Java Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
   build:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Find Java files
-        run: find ./src/test/java -type f -name "*.java" > tests.txt
+        run: find ./test -type f -name "*.java" > tests.txt
       - name: Compile Java files
         run: javac -d out -cp ./out:./tests/lib/junit-platform-console-standalone-1.9.3.jar:./tests/lib/gson-2.10.1.jar @tests.txt
