@@ -1,4 +1,4 @@
-package test;
+package com.praktikum.kanban.test;
 
 import org.junit.jupiter.api.Test;
 import com.praktikum.kanban.service.HistoryManager;
