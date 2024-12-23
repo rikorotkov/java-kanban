@@ -25,9 +25,21 @@ class InMemoryHistoryManagerTest {
         taskManager = Managers.getDefault();
     }
 
+    private Task createTask(String description, String taskName) {
+        return taskManager.createTask(new Task(description, taskName));
+    }
+
+    private Epic createEpic(String description, String epicName) {
+        return taskManager.createEpic(new Epic(description, epicName));
+    }
+
+    private Subtask createSubtask(String description, String subtaskName, int epicId) {
+        return taskManager.createSubtask(new Subtask(description, subtaskName, epicId));
+    }
+
     @Test
     public void addToHistoryTest() {
-        Task task = new Task("Описание задачи", "Имя задачи");
+        Task task = createTask("Описание задачи", "Имя задачи");
         historyManager.add(task);
         final List<Task> history = historyManager.getHistory();
         assertNotNull(history, "История пустая");
@@ -36,8 +48,8 @@ class InMemoryHistoryManagerTest {
 
     @Test
     public void addToHistoryAndPreventDuplicatesTest() {
-        Task task1 = new Task("Описание задачи 1", "Имя задачи 1");
-        Task task2 = new Task("Описание задачи 2", "Имя задачи 2");
+        Task task1 = createTask("Описание задачи 1", "Имя задачи 1");
+        Task task2 = createTask("Описание задачи 2", "Имя задачи 2");
 
         historyManager.add(task1);
         historyManager.add(task2);
@@ -51,8 +63,8 @@ class InMemoryHistoryManagerTest {
 
     @Test
     public void removeTaskFromHistoryTest() {
-        Task task1 = new Task("Описание задачи 1", "Имя задачи 1");
-        Task task2 = new Task("Описание задачи 2", "Имя задачи 2");
+        Task task1 = createTask("Описание задачи 1", "Имя задачи 1");
+        Task task2 = createTask("Описание задачи 2", "Имя задачи 2");
 
         historyManager.add(task1);
         historyManager.add(task2);
@@ -73,8 +85,8 @@ class InMemoryHistoryManagerTest {
 
     @Test
     public void clearHistoryTest() {
-        Task task1 = new Task("Описание задачи 1", "Имя задачи 1");
-        Task task2 = new Task("Описание задачи 2", "Имя задачи 2");
+        Task task1 = createTask("Описание задачи 1", "Имя задачи 1");
+        Task task2 = createTask("Описание задачи 2", "Имя задачи 2");
 
         historyManager.add(task1);
         historyManager.add(task2);
@@ -88,9 +100,9 @@ class InMemoryHistoryManagerTest {
 
     @Test
     public void epicAndSubtasksHistoryTest() {
-        Epic epic = new Epic("Описание эпика", "Имя эпика");
-        Subtask subtask1 = new Subtask("Описание подзадачи 1", "Имя подзадачи 1", epic.getId());
-        Subtask subtask2 = new Subtask("Описание подзадачи 2", "Имя подзадачи 2", epic.getId());
+        Epic epic = createEpic("Описание эпика", "Имя эпика");
+        Subtask subtask1 = createSubtask("Описание подзадачи 1", "Имя подзадачи 1", epic.getId());
+        Subtask subtask2 = createSubtask("Описание подзадачи 2", "Имя подзадачи 2", epic.getId());
 
         taskManager.createEpic(epic);
         taskManager.createSubtask(subtask1);
@@ -104,7 +116,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     public void updateTaskShouldReflectInHistoryTest() {
-        Task task = new Task("Описание задачи", "Имя задачи");
+        Task task = createTask("Описание задачи", "Имя задачи");
         taskManager.createTask(task);
 
         historyManager.add(task);
