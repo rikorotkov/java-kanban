@@ -64,6 +64,7 @@ public class InMemoryTaskManager implements TaskManager {
         Task task = findTaskById(id);
         tasks.remove(task);
         logger.info("Задача удалена");
+        historyManager.remove(id);
     }
 
     @Override
@@ -76,7 +77,7 @@ public class InMemoryTaskManager implements TaskManager {
     public List<Task> findTasksByStatus(String status) {
         ArrayList<Task> tasksByStatus = new ArrayList<>();
         for (Task task : tasks) {
-            if (task.getTaskStatus().equals(status.toUpperCase())) {
+            if (task.getTaskStatus().equals(status)) {
                 tasksByStatus.add(task);
             }
         }
@@ -150,6 +151,12 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = findEpicById(id);
         if (epic != null) {
             epics.remove(epic);
+            if (epic.getSubtasks() != null) {
+                for (Subtask subtask : epic.getSubtasks()) {
+                    historyManager.remove(subtask.getId());
+                }
+            }
+            historyManager.remove(id);
             subtasks.removeIf(subtask -> subtask.getEpicId() == id);
         }
         logger.info("Эпик " + epic.getTaskName() + " удален");
@@ -215,16 +222,16 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Subtask updateSubtask(int id, String taskDescription, String taskName, TaskStatus status) {
         Subtask subtask = findSubtaskById(id);
+
         if (subtask == null) {
             throw new IllegalArgumentException("Подзадача с ID - " + id + "не найдена");
         }
+
         Epic epic = findEpicById(subtask.getEpicId());
-        if (subtask != null) {
-            subtask.setTaskDescription(taskDescription);
-            subtask.setTaskName(taskName);
-            subtask.setTaskStatus(status);
-            logger.info("Подзадача " + subtask.getTaskName() + " обновлена");
-        }
+        subtask.setTaskDescription(taskDescription);
+        subtask.setTaskName(taskName);
+        subtask.setTaskStatus(status);
+        logger.info("Подзадача " + subtask.getTaskName() + " обновлена");
         updateEpicStatus(epic);
         return subtask;
     }
