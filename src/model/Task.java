@@ -17,6 +17,17 @@ public class Task {
         this.taskStatus = TaskStatus.NEW;
     }
 
+    public Task(int id, String taskName, String taskDescription, TaskStatus taskStatus) {
+        this.id = id;
+        this.taskName = taskName;
+        this.taskDescription = taskDescription;
+        this.taskStatus = taskStatus;
+
+        if (id > lastId) {
+            lastId = id;
+        }
+    }
+
     public int getId() {
         return id;
     }
@@ -43,6 +54,10 @@ public class Task {
 
     public void setTaskStatus(TaskStatus taskStatus) {
         this.taskStatus = taskStatus;
+    }
+
+    public TaskType getType() {
+        return TaskType.TASK;
     }
 
     @Override

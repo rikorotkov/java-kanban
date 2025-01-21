@@ -10,6 +10,11 @@ public class Subtask extends Task {
         this.epicId = epicId;
     }
 
+    public Subtask(int id, String taskName, String taskDescription, TaskStatus taskStatus, int epicId) {
+        super(id, taskDescription, taskName, taskStatus);
+        this.epicId = epicId;
+    }
+
     public int getEpicId() {
         return epicId;
     }
@@ -21,6 +26,10 @@ public class Subtask extends Task {
             }
         }
         return null;
+    }
+
+    public TaskType getTaskType() {
+        return TaskType.SUBTASK;
     }
 
     @Override

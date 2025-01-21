@@ -1,6 +1,7 @@
 import model.Task;
 import service.HistoryManager;
 import service.Managers;
+import service.TaskManager;
 
 import java.util.logging.Logger;
 
@@ -9,6 +10,7 @@ public class Main {
     public static void main(String[] args) {
         Logger logger = Logger.getLogger(Main.class.getName());
         HistoryManager historyManager = Managers.getDefaultHistory();
+        TaskManager taskManager = Managers.getDefault();
 
         Task task1 = new Task("Описание задачи 1", "Задача 1");
         Task task2 = new Task("Описание задачи 2", "Задача 2");
