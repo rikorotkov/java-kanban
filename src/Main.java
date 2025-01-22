@@ -26,5 +26,6 @@ public class Main {
 
         historyManager.remove(1);
         logger.info("История после удаления Task 1: " + historyManager.getHistory());
+        System.out.println(historyManager.getHistory());
     }
 }
