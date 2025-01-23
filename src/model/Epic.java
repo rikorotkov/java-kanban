@@ -10,12 +10,37 @@ public class Epic extends Task {
         this.subtasks = new ArrayList<>();
     }
 
+    public Epic(int id, String taskDescription, String taskName, TaskStatus status) {
+        super(id, taskDescription, taskName, status);
+        this.subtasks = new ArrayList<>();
+    }
+
+
     public void addSubtask(Subtask subtask) {
         subtasks.add(subtask);
     }
 
     public ArrayList<Subtask> getSubtasks() {
         return subtasks;
+    }
+
+    public TaskType getTaskType() {
+        return TaskType.EPIC;
+    }
+
+    public static Epic fromCsv(String csvLine) {
+        String[] fields = csvLine.split(",");
+        int id = Integer.parseInt(fields[0]);
+        String name = fields[2];
+        String description = fields[4];
+        TaskStatus status = TaskStatus.valueOf(fields[3]);
+
+        return new Epic(id, name, description, status);
+    }
+
+    @Override
+    public String toCsv() {
+        return String.format("%d,EPIC,%s,%s,%s", id, taskName, taskStatus, taskDescription);
     }
 
     @Override

@@ -3,10 +3,10 @@ package model;
 import java.util.Objects;
 
 public class Task {
-    private final int id;
-    private String taskName;
-    private String taskDescription;
-    private TaskStatus taskStatus;
+    protected final int id;
+    protected String taskName;
+    protected String taskDescription;
+    protected TaskStatus taskStatus;
 
     private static int lastId = 0;
 
@@ -15,6 +15,17 @@ public class Task {
         this.taskDescription = taskDescription;
         this.taskName = taskName;
         this.taskStatus = TaskStatus.NEW;
+    }
+
+    public Task(int id, String taskName, String taskDescription, TaskStatus taskStatus) {
+        this.id = id;
+        this.taskName = taskName;
+        this.taskDescription = taskDescription;
+        this.taskStatus = taskStatus;
+
+        if (id > lastId) {
+            lastId = id;
+        }
     }
 
     public int getId() {
@@ -43,6 +54,24 @@ public class Task {
 
     public void setTaskStatus(TaskStatus taskStatus) {
         this.taskStatus = taskStatus;
+    }
+
+    public TaskType getType() {
+        return TaskType.TASK;
+    }
+
+    public static Task fromCsv(String csvLine) {
+        String[] fields = csvLine.split(",");
+        int id = Integer.parseInt(fields[0]);
+        String name = fields[2];
+        String description = fields[4];
+        TaskStatus status = TaskStatus.valueOf(fields[3]);
+
+        return new Task(id, name, description, status);
+    }
+
+    public String toCsv() {
+        return String.format("%d,TASK,%s,%s,%s", id, taskName, taskStatus, taskDescription);
     }
 
     @Override
