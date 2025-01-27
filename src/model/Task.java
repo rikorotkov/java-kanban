@@ -1,5 +1,7 @@
 package model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -7,6 +9,8 @@ public class Task {
     protected String taskName;
     protected String taskDescription;
     protected TaskStatus taskStatus;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
     private static int lastId = 0;
 
@@ -72,6 +76,29 @@ public class Task {
 
     public String toCsv() {
         return String.format("%d,TASK,%s,%s,%s", id, taskName, taskStatus, taskDescription);
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        if (startTime == null || duration == null) {
+            return null;
+        }
+        return startTime.plus(duration);
     }
 
     @Override
