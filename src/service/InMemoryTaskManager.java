@@ -7,6 +7,7 @@ import model.TaskStatus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -15,6 +16,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final ArrayList<Epic> epics;
     private final ArrayList<Subtask> subtasks;
     private final Logger logger;
+    private final TreeSet<Task> prioritizedTasks;
 
     public InMemoryTaskManager(Logger logger) {
         this.logger = logger;
@@ -22,6 +24,18 @@ public class InMemoryTaskManager implements TaskManager {
         this.epics = new ArrayList<>();
         this.subtasks = new ArrayList<>();
         this.tasks = new ArrayList<>();
+        this.prioritizedTasks = new TreeSet<>((task1, task2) -> {
+            if (task1.getStartTime() == null && task2.getStartTime() == null) {
+                return 0;
+            }
+            if (task1.getStartTime() == null) {
+                return 1;
+            }
+            if (task2.getStartTime() == null) {
+                return -1;
+            }
+            return task1.getStartTime().compareTo(task2.getStartTime());
+        });
     }
 
     @Override
@@ -63,6 +77,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteTask(int id) {
         Task task = findTaskById(id);
         tasks.remove(task);
+        prioritizedTasks.remove(task);
         logger.info("Задача удалена");
         historyManager.remove(id);
     }
@@ -187,6 +202,9 @@ public class InMemoryTaskManager implements TaskManager {
         }
         epic.addSubtask(subtask);
         subtasks.add(subtask);
+        if (subtask.getStartTime() != null) {
+            prioritizedTasks.add(subtask);
+        }
         logger.info("Подзадача " + subtask.getTaskName() + " была добавлена в эпик " + epic.getTaskName());
         updateEpicStatus(epic);
         return subtask;
@@ -241,6 +259,7 @@ public class InMemoryTaskManager implements TaskManager {
         Subtask subtask = findSubtaskById(id);
         if (subtask != null) {
             subtasks.remove(subtask);
+            prioritizedTasks.remove(subtask);
             logger.info("Подзадача " + subtask.getTaskName() + " удалена");
         }
     }
@@ -260,6 +279,10 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
         return subtasksByStatus;
+    }
+
+    public List<Task> getPrioritizedTasks() {
+        return new ArrayList<>(prioritizedTasks);
     }
 
     public List<Task> getHistory() {
