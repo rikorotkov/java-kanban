@@ -68,15 +68,23 @@ public class Task {
         String[] fields = csvLine.split(",");
         int id = Integer.parseInt(fields[0]);
         String name = fields[2];
-        String description = fields[4];
         TaskStatus status = TaskStatus.valueOf(fields[3]);
+        String description = fields[4];
+        Duration duration = fields[5].isEmpty() ? null : Duration.ofMinutes(Long.parseLong(fields[5]));
+        LocalDateTime startTime = fields[6].isEmpty() ? null : LocalDateTime.parse(fields[6]);
 
-        return new Task(id, name, description, status);
+        Task task = new Task(id, name, description, status);
+        task.setDuration(duration);
+        task.setStartTime(startTime);
+        return task;
     }
 
     public String toCsv() {
-        return String.format("%d,TASK,%s,%s,%s", id, taskName, taskStatus, taskDescription);
+        String durationStr = (duration != null) ? String.valueOf(duration.toMinutes()) : "";
+        String startTimeStr = (startTime != null) ? startTime.toString() : "";
+        return String.format("%d,TASK,%s,%s,%s,%s,%s", id, taskName, taskStatus, taskDescription, durationStr, startTimeStr);
     }
+
 
     public Duration getDuration() {
         return duration;

@@ -75,24 +75,33 @@ public class Epic extends Task {
         return TaskType.EPIC;
     }
 
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
     public static Epic fromCsv(String csvLine) {
         String[] fields = csvLine.split(",");
         int id = Integer.parseInt(fields[0]);
         String name = fields[2];
-        String description = fields[4];
         TaskStatus status = TaskStatus.valueOf(fields[3]);
+        String description = fields[4];
+        Duration duration = fields[5].isEmpty() ? null : Duration.ofMinutes(Long.parseLong(fields[5]));
+        LocalDateTime startTime = fields[6].isEmpty() ? null : LocalDateTime.parse(fields[6]);
+        LocalDateTime endTime = fields[7].isEmpty() ? null : LocalDateTime.parse(fields[7]);
 
-        return new Epic(id, name, description, status);
+        Epic epic = new Epic(id, description, name, status);
+        epic.setDuration(duration);
+        epic.setStartTime(startTime);
+        epic.setEndTime(endTime);
+        return epic;
     }
 
     @Override
     public String toCsv() {
-        long durationInMinutes = duration != null ? duration.toMinutes() : 0;
-        String startTimeStr = startTime != null ? startTime.toString() : "";
-        String endTimeStr = endTime != null ? endTime.toString() : "";
-
-        return String.format("%d,EPIC,%s,%s,%s,%d,%s,%s", id, taskName, taskStatus, taskDescription,
-                durationInMinutes, startTimeStr, endTimeStr);
+        String durationStr = (duration != null) ? String.valueOf(duration.toMinutes()) : "";
+        String startTimeStr = (startTime != null) ? startTime.toString() : "";
+        String endTimeStr = (getEndTime() != null) ? getEndTime().toString() : "";
+        return String.format("%d,EPIC,%s,%s,%s,%s,%s,%s", id, taskName, taskStatus, taskDescription, durationStr, startTimeStr, endTimeStr);
     }
 
     @Override
