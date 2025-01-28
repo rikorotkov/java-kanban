@@ -54,5 +54,11 @@ public interface TaskManager {
 
     List<Subtask> findSubtasksByStatus(String status);
 
+    boolean isTaskOverlapping(Task newTask);
+
+    boolean isTimeOverlapping(Task existingTask, Task newTask);
+
+    List<Task> getPrioritizedTasks();
+
     List<Task> getHistory();
 }

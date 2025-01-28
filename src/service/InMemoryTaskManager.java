@@ -5,6 +5,7 @@ import model.Subtask;
 import model.Task;
 import model.TaskStatus;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
@@ -40,7 +41,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task createTask(Task task) {
+        if (isTaskOverlapping(task)) {
+            throw new IllegalArgumentException("Задача пересекается с другой задачей по времени выполнения.");
+        }
         tasks.add(task);
+        prioritizedTasks.add(task);
         logger.info("задача " + task.getTaskName() + " зарегистрирована. ID: " + task.getId());
         return task;
     }
@@ -67,6 +72,10 @@ public class InMemoryTaskManager implements TaskManager {
         if (task == null) {
             throw new IllegalArgumentException("Задача с ID - " + id + "не найдена");
         }
+        Task tempTask = new Task(id, taskName, taskDescription, status, task.getStartTime(), task.getDuration());
+        if (isTaskOverlapping(tempTask)) {
+            throw new IllegalArgumentException("Задача пересекается с другой задачей по времени выполнения.");
+        }
         task.setTaskDescription(taskDescription);
         task.setTaskName(taskName);
         task.setTaskStatus(status);
@@ -90,9 +99,17 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Task> findTasksByStatus(String status) {
+        TaskStatus taskStatus;
+        try {
+            taskStatus = TaskStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            logger.warning("Некорректный статус: " + status);
+            return new ArrayList<>();
+        }
+
         ArrayList<Task> tasksByStatus = new ArrayList<>();
         for (Task task : tasks) {
-            if (task.getTaskStatus().equals(status)) {
+            if (task.getTaskStatus() == taskStatus) {
                 tasksByStatus.add(task);
             }
         }
@@ -184,13 +201,14 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Epic> findEpicsByStatus(String status) {
+    public List<Epic> findEpicsByStatus(String status) {
+        ArrayList<Epic> filteredEpics = new ArrayList<>();
         for (Epic epic : epics) {
-            if (epic.getTaskStatus().equals(status)) {
-                return epics;
+            if (epic.getTaskStatus().toString().equalsIgnoreCase(status)) {
+                filteredEpics.add(epic);
             }
         }
-        return null;
+        return filteredEpics;
     }
 
     @Override
@@ -281,10 +299,31 @@ public class InMemoryTaskManager implements TaskManager {
         return subtasksByStatus;
     }
 
+    @Override
     public List<Task> getPrioritizedTasks() {
         return new ArrayList<>(prioritizedTasks);
     }
 
+    @Override
+    public boolean isTimeOverlapping(Task existingTask, Task newTask) {
+        if (existingTask.getStartTime() == null || newTask.getStartTime() == null) {
+            return false; // пропуск задач без времени
+        }
+        LocalDateTime existingStart = existingTask.getStartTime();
+        LocalDateTime existingEnd = existingStart.plus(existingTask.getDuration());
+        LocalDateTime newStart = newTask.getStartTime();
+        LocalDateTime newEnd = newStart.plus(newTask.getDuration());
+
+        return !(newEnd.isBefore(existingStart) || newStart.isAfter(existingEnd));
+    }
+
+    @Override
+    public boolean isTaskOverlapping(Task newTask) {
+        return getPrioritizedTasks().stream()
+                .anyMatch(existingTask -> isTimeOverlapping(existingTask, newTask));
+    }
+
+    @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
     }

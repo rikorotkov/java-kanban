@@ -1,22 +1,26 @@
-package test;
-
 import model.Epic;
 import model.Subtask;
 import model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.Managers;
-import service.TaskManager;
+import service.InMemoryTaskManager;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.logging.Logger;
 
-class InMemoryTaskManagerTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-    private TaskManager taskManager;
+class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
+    Logger logger = Logger.getLogger(InMemoryTaskManagerTest.class.getName());
+    private InMemoryTaskManager taskManager;
+
+    @Override
+    protected InMemoryTaskManager createTaskManager() {
+        return new InMemoryTaskManager(logger);
+    }
 
     @BeforeEach
-    public void setUp() {
-        taskManager = Managers.getDefault();
+    void setUp() {
+        taskManager = new InMemoryTaskManager(logger);
     }
 
     @Test
@@ -45,6 +49,4 @@ class InMemoryTaskManagerTest {
 
         assertEquals(subtask, taskManager.findSubtaskById(subtask.getId()), "Подзадача не найдена");
     }
-
-
 }
