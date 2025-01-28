@@ -45,7 +45,7 @@ public class Epic extends Task {
         return endTime;
     }
 
-    private void recalculateFields() {
+    public void recalculateFields() {
         if (subtasks.isEmpty()) {
             duration = Duration.ZERO;
             startTime = null;
@@ -75,10 +75,6 @@ public class Epic extends Task {
         return TaskType.EPIC;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
-
     public static Epic fromCsv(String csvLine) {
         String[] fields = csvLine.split(",");
         int id = Integer.parseInt(fields[0]);
@@ -92,7 +88,7 @@ public class Epic extends Task {
         Epic epic = new Epic(id, description, name, status);
         epic.setDuration(duration);
         epic.setStartTime(startTime);
-        epic.setEndTime(endTime);
+        epic.endTime = endTime;
         return epic;
     }
 

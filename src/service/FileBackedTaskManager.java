@@ -119,6 +119,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public Subtask createSubtask(Subtask subtask) {
         Subtask createdSubtask = super.createSubtask(subtask);
+        Epic epic = findEpicById(subtask.getEpicId());
+        if (epic != null) {
+            epic.recalculateFields();
+        }
         save();
         return createdSubtask;
     }
@@ -137,7 +141,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void deleteSubtask(int id) {
-        super.deleteSubtask(id);
-        save();
+        Subtask subtask = findSubtaskById(id);
+        if (subtask != null) {
+            super.deleteSubtask(id);
+            Epic epic = findEpicById(subtask.getEpicId());
+            if (epic != null) {
+                epic.recalculateFields();
+            }
+
+            save();
+        }
     }
 }

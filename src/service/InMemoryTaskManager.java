@@ -219,6 +219,7 @@ public class InMemoryTaskManager implements TaskManager {
             return null;
         }
         epic.addSubtask(subtask);
+        epic.recalculateFields();
         subtasks.add(subtask);
         if (subtask.getStartTime() != null) {
             prioritizedTasks.add(subtask);
@@ -280,6 +281,10 @@ public class InMemoryTaskManager implements TaskManager {
             prioritizedTasks.remove(subtask);
             logger.info("Подзадача " + subtask.getTaskName() + " удалена");
         }
+        Epic epic = findEpicById(subtask.getEpicId());
+        if (epic != null) {
+            epic.recalculateFields();
+        }
     }
 
     @Override
@@ -306,8 +311,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public boolean isTimeOverlapping(Task existingTask, Task newTask) {
-        if (existingTask.getStartTime() == null || newTask.getStartTime() == null) {
-            return false; // пропуск задач без времени
+        if (existingTask.getStartTime() == null || existingTask.getDuration() == null ||
+                newTask.getStartTime() == null || newTask.getDuration() == null) {
+            return false;
         }
         LocalDateTime existingStart = existingTask.getStartTime();
         LocalDateTime existingEnd = existingStart.plus(existingTask.getDuration());
