@@ -1,5 +1,7 @@
 package model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Subtask extends Task {
@@ -32,16 +34,23 @@ public class Subtask extends Task {
         String[] fields = csvLine.split(",");
         int id = Integer.parseInt(fields[0]);
         String name = fields[2];
-        String description = fields[4];
         TaskStatus status = TaskStatus.valueOf(fields[3]);
+        String description = fields[4];
         int epicId = Integer.parseInt(fields[5]);
+        Duration duration = fields[6].isEmpty() ? null : Duration.ofMinutes(Long.parseLong(fields[6]));
+        LocalDateTime startTime = fields[7].isEmpty() ? null : LocalDateTime.parse(fields[7]);
 
-        return new Subtask(id, name, description, status, epicId);
+        Subtask subtask = new Subtask(id, name, description, status, epicId);
+        subtask.setDuration(duration);
+        subtask.setStartTime(startTime);
+        return subtask;
     }
 
     @Override
     public String toCsv() {
-        return String.format("%d,SUBTASK,%s,%s,%s,%d", id, taskName, taskStatus, taskDescription, epicId);
+        String durationStr = (duration != null) ? String.valueOf(duration.toMinutes()) : "";
+        String startTimeStr = (startTime != null) ? startTime.toString() : "";
+        return String.format("%d,SUBTASK,%s,%s,%s,%d,%s,%s", id, taskName, taskStatus, taskDescription, epicId, durationStr, startTimeStr);
     }
 
     public TaskType getTaskType() {

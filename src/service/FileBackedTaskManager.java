@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private final  HistoryManager historyManager;
+    private final HistoryManager historyManager;
     private final File file;
 
     public FileBackedTaskManager(File file) {
@@ -51,32 +51,35 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 writer.newLine();
             }
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка сохранения данных в файл", e);
+            throw new ManagerSaveException("Ошибка сохранения данных в файл: " + file.getAbsolutePath(), e);
         }
     }
 
     public static FileBackedTaskManager loadFromFile(File file) throws ManagerSaveException {
+        if (file == null || !file.exists() || !file.isFile()) {
+            String filePath = file != null ? file.getAbsolutePath() : "null";
+            throw new ManagerSaveException("Файл не существует или недоступен: " + filePath, null);
+        }
+
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
             String line;
-            boolean isHistorySection = false;
             while ((line = reader.readLine()) != null) {
                 if (line.equals("history")) {
-                    isHistorySection = true;
-                    line = reader.readLine(); // Чтение следующей строки с ID задач в истории
+                    line = reader.readLine();
                     if (line != null && !line.isBlank()) {
                         String[] ids = line.split(",");
                         for (String id : ids) {
-                            Task task = manager.findTaskById(Integer.parseInt(id.trim()));  // Преобразование ID в число
+                            Task task = manager.findTaskById(Integer.parseInt(id.trim()));
                             if (task != null) {
                                 manager.getHistoryManager().add(task);
                             }
                         }
                     }
-                } else if (!isHistorySection) {
-                    if (!line.contains("id")) {
-                        Task task = Task.fromCsv(line);
+                } else if (!line.startsWith("id") && !line.isBlank()) {
+                    Task task = Task.fromCsv(line);
+                    if (task != null) {
                         if (task instanceof Subtask) {
                             manager.createSubtask((Subtask) task);
                         } else if (task instanceof Epic) {
@@ -88,7 +91,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 }
             }
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка загрузки данных из файла", e);
+            throw new ManagerSaveException("Ошибка загрузки данных из файла: " + file.getAbsolutePath(), e);
         }
 
         return manager;
@@ -116,6 +119,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public Subtask createSubtask(Subtask subtask) {
         Subtask createdSubtask = super.createSubtask(subtask);
+        Epic epic = findEpicById(subtask.getEpicId());
+        if (epic != null) {
+            epic.recalculateFields();
+        }
         save();
         return createdSubtask;
     }
@@ -134,7 +141,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void deleteSubtask(int id) {
-        super.deleteSubtask(id);
-        save();
+        Subtask subtask = findSubtaskById(id);
+        if (subtask != null) {
+            super.deleteSubtask(id);
+            Epic epic = findEpicById(subtask.getEpicId());
+            if (epic != null) {
+                epic.recalculateFields();
+            }
+
+            save();
+        }
     }
 }

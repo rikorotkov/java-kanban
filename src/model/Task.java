@@ -1,5 +1,9 @@
 package model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
 public class Task {
@@ -7,6 +11,8 @@ public class Task {
     protected String taskName;
     protected String taskDescription;
     protected TaskStatus taskStatus;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
     private static int lastId = 0;
 
@@ -26,6 +32,19 @@ public class Task {
         if (id > lastId) {
             lastId = id;
         }
+    }
+
+    public Task(int id, String taskName, String taskDescription, TaskStatus status, LocalDateTime startTime, Duration duration) {
+        this.id = id;
+        this.taskName = taskName;
+        this.taskDescription = taskDescription;
+        this.taskStatus = TaskStatus.NEW;
+
+        if (id > lastId) {
+            lastId = id;
+        }
+        this.startTime = startTime;
+        this.duration = duration;
     }
 
     public int getId() {
@@ -61,17 +80,71 @@ public class Task {
     }
 
     public static Task fromCsv(String csvLine) {
-        String[] fields = csvLine.split(",");
-        int id = Integer.parseInt(fields[0]);
-        String name = fields[2];
-        String description = fields[4];
-        TaskStatus status = TaskStatus.valueOf(fields[3]);
+        try {
+            String[] fields = csvLine.split(",");
+            if (fields.length < 7) {
+                throw new IllegalArgumentException("Неверный формат строки CSV: недостаточно данных");
+            }
 
-        return new Task(id, name, description, status);
+            int id = Integer.parseInt(fields[0].trim());
+            String name = fields[2].trim();
+            TaskStatus status = TaskStatus.valueOf(fields[3].trim());
+            String description = fields[4].trim();
+
+            Duration duration = fields[5].isEmpty() ? null : Duration.ofMinutes(Long.parseLong(fields[5].trim()));
+
+            LocalDateTime startTime = null;
+            if (!fields[6].isEmpty()) {
+                try {
+                    startTime = LocalDateTime.parse(fields[6].trim(), DateTimeFormatter.ISO_DATE_TIME);
+                } catch (DateTimeParseException e) {
+                    System.err.println("Ошибка парсинга даты/времени в строке: " + csvLine);
+                }
+            }
+
+            Task task = new Task(id, name, description, status);
+            task.setDuration(duration);
+            task.setStartTime(startTime);
+            return task;
+        } catch (NumberFormatException e) {
+            System.err.println("Ошибка преобразования числа в строке: " + csvLine);
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            System.err.println("Ошибка обработки строки CSV: " + csvLine);
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public String toCsv() {
-        return String.format("%d,TASK,%s,%s,%s", id, taskName, taskStatus, taskDescription);
+        String durationStr = (duration != null) ? String.valueOf(duration.toMinutes()) : "";
+        String startTimeStr = (startTime != null) ? startTime.toString() : "";
+        return String.format("%d,TASK,%s,%s,%s,%s,%s", id, taskName, taskStatus, taskDescription, durationStr, startTimeStr);
+    }
+
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        if (startTime == null || duration == null) {
+            return null;
+        }
+        return startTime.plus(duration);
     }
 
     @Override

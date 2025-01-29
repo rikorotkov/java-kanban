@@ -5,8 +5,10 @@ import model.Subtask;
 import model.Task;
 import model.TaskStatus;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -15,6 +17,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final ArrayList<Epic> epics;
     private final ArrayList<Subtask> subtasks;
     private final Logger logger;
+    private final TreeSet<Task> prioritizedTasks;
 
     public InMemoryTaskManager(Logger logger) {
         this.logger = logger;
@@ -22,11 +25,27 @@ public class InMemoryTaskManager implements TaskManager {
         this.epics = new ArrayList<>();
         this.subtasks = new ArrayList<>();
         this.tasks = new ArrayList<>();
+        this.prioritizedTasks = new TreeSet<>((task1, task2) -> {
+            if (task1.getStartTime() == null && task2.getStartTime() == null) {
+                return 0;
+            }
+            if (task1.getStartTime() == null) {
+                return 1;
+            }
+            if (task2.getStartTime() == null) {
+                return -1;
+            }
+            return task1.getStartTime().compareTo(task2.getStartTime());
+        });
     }
 
     @Override
     public Task createTask(Task task) {
+        if (isTaskOverlapping(task)) {
+            throw new IllegalArgumentException("Задача пересекается с другой задачей по времени выполнения.");
+        }
         tasks.add(task);
+        prioritizedTasks.add(task);
         logger.info("задача " + task.getTaskName() + " зарегистрирована. ID: " + task.getId());
         return task;
     }
@@ -53,6 +72,10 @@ public class InMemoryTaskManager implements TaskManager {
         if (task == null) {
             throw new IllegalArgumentException("Задача с ID - " + id + "не найдена");
         }
+        Task tempTask = new Task(id, taskName, taskDescription, status, task.getStartTime(), task.getDuration());
+        if (isTaskOverlapping(tempTask)) {
+            throw new IllegalArgumentException("Задача пересекается с другой задачей по времени выполнения.");
+        }
         task.setTaskDescription(taskDescription);
         task.setTaskName(taskName);
         task.setTaskStatus(status);
@@ -63,6 +86,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteTask(int id) {
         Task task = findTaskById(id);
         tasks.remove(task);
+        prioritizedTasks.remove(task);
         logger.info("Задача удалена");
         historyManager.remove(id);
     }
@@ -75,9 +99,17 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Task> findTasksByStatus(String status) {
+        TaskStatus taskStatus;
+        try {
+            taskStatus = TaskStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            logger.warning("Некорректный статус: " + status);
+            return new ArrayList<>();
+        }
+
         ArrayList<Task> tasksByStatus = new ArrayList<>();
         for (Task task : tasks) {
-            if (task.getTaskStatus().equals(status)) {
+            if (task.getTaskStatus() == taskStatus) {
                 tasksByStatus.add(task);
             }
         }
@@ -169,13 +201,14 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Epic> findEpicsByStatus(String status) {
+    public List<Epic> findEpicsByStatus(String status) {
+        ArrayList<Epic> filteredEpics = new ArrayList<>();
         for (Epic epic : epics) {
-            if (epic.getTaskStatus().equals(status)) {
-                return epics;
+            if (epic.getTaskStatus().toString().equalsIgnoreCase(status)) {
+                filteredEpics.add(epic);
             }
         }
-        return null;
+        return filteredEpics;
     }
 
     @Override
@@ -186,7 +219,11 @@ public class InMemoryTaskManager implements TaskManager {
             return null;
         }
         epic.addSubtask(subtask);
+        epic.recalculateFields();
         subtasks.add(subtask);
+        if (subtask.getStartTime() != null) {
+            prioritizedTasks.add(subtask);
+        }
         logger.info("Подзадача " + subtask.getTaskName() + " была добавлена в эпик " + epic.getTaskName());
         updateEpicStatus(epic);
         return subtask;
@@ -241,7 +278,12 @@ public class InMemoryTaskManager implements TaskManager {
         Subtask subtask = findSubtaskById(id);
         if (subtask != null) {
             subtasks.remove(subtask);
+            prioritizedTasks.remove(subtask);
             logger.info("Подзадача " + subtask.getTaskName() + " удалена");
+        }
+        Epic epic = findEpicById(subtask.getEpicId());
+        if (epic != null) {
+            epic.recalculateFields();
         }
     }
 
@@ -262,6 +304,32 @@ public class InMemoryTaskManager implements TaskManager {
         return subtasksByStatus;
     }
 
+    @Override
+    public List<Task> getPrioritizedTasks() {
+        return new ArrayList<>(prioritizedTasks);
+    }
+
+    @Override
+    public boolean isTimeOverlapping(Task existingTask, Task newTask) {
+        if (existingTask.getStartTime() == null || existingTask.getDuration() == null ||
+                newTask.getStartTime() == null || newTask.getDuration() == null) {
+            return false;
+        }
+        LocalDateTime existingStart = existingTask.getStartTime();
+        LocalDateTime existingEnd = existingStart.plus(existingTask.getDuration());
+        LocalDateTime newStart = newTask.getStartTime();
+        LocalDateTime newEnd = newStart.plus(newTask.getDuration());
+
+        return !(newEnd.isBefore(existingStart) || newStart.isAfter(existingEnd));
+    }
+
+    @Override
+    public boolean isTaskOverlapping(Task newTask) {
+        return getPrioritizedTasks().stream()
+                .anyMatch(existingTask -> isTimeOverlapping(existingTask, newTask));
+    }
+
+    @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
     }

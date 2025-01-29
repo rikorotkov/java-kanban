@@ -128,4 +128,38 @@ class InMemoryHistoryManagerTest {
 
         assertEquals(updatedTask, history.get(0), "История должна обновляться при изменении задачи");
     }
+
+    @Test
+    void shouldHandleEmptyHistory() {
+        assertTrue(historyManager.getHistory().isEmpty(), "История должна быть пустой");
+    }
+
+    @Test
+    void shouldNotAddDuplicateTasks() {
+        Task task = new Task(1, "Task 1", "Description", TaskStatus.NEW, null, null);
+        historyManager.add(task);
+        historyManager.add(task);
+
+        assertEquals(1, historyManager.getHistory().size(), "В истории не должно быть дубликатов");
+    }
+
+    @Test
+    void shouldRemoveTaskFromBeginningMiddleAndEnd() {
+        Task task1 = new Task(1, "Task 1", "Description", TaskStatus.NEW, null, null);
+        Task task2 = new Task(2, "Task 2", "Description", TaskStatus.NEW, null, null);
+        Task task3 = new Task(3, "Task 3", "Description", TaskStatus.NEW, null, null);
+
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task3);
+
+        historyManager.remove(task1.getId());
+        assertEquals(2, historyManager.getHistory().size(), "Задача должна быть удалена");
+
+        historyManager.remove(task2.getId());
+        assertEquals(1, historyManager.getHistory().size(), "Задача должна быть удалена");
+
+        historyManager.remove(task3.getId());
+        assertTrue(historyManager.getHistory().isEmpty(), "История должна быть пустой");
+    }
 }
