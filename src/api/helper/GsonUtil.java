@@ -9,9 +9,10 @@ import java.time.LocalDateTime;
 
 public class GsonUtil {
     private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(TaskStatus.class, new TaskStatusAdapter()) // Добавьте адаптер для TaskStatus
+            .registerTypeAdapter(TaskStatus.class, new TaskStatusAdapter())
             .registerTypeAdapter(Duration.class, new DurationAdapter())
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .excludeFieldsWithoutExposeAnnotation()  // Это исключит поля без @Expose
             .create();
 
     public static Gson getGson() {

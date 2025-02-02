@@ -1,11 +1,15 @@
 package model;
 
+import com.google.gson.annotations.Expose;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Epic extends Task {
     private ArrayList<Subtask> subtasks;
+
+    @Expose(serialize = false)
     private Duration duration;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
