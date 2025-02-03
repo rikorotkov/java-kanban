@@ -18,7 +18,13 @@ public class Subtask extends Task {
     }
 
     public int getEpicId() {
+        System.out.println(epicId);
         return epicId;
+    }
+
+    public void setEpicId(int epicId) {
+        System.out.println("setEpicId: " + epicId);
+        this.epicId = epicId;
     }
 
     public String getEpicName(ArrayList<Epic> epics) {
@@ -36,7 +42,7 @@ public class Subtask extends Task {
         String name = fields[2];
         TaskStatus status = TaskStatus.valueOf(fields[3]);
         String description = fields[4];
-        int epicId = Integer.parseInt(fields[5]);
+        int epicId = Integer.parseInt(fields[5]); // Получаем epicId из CSV
         Duration duration = fields[6].isEmpty() ? null : Duration.ofMinutes(Long.parseLong(fields[6]));
         LocalDateTime startTime = fields[7].isEmpty() ? null : LocalDateTime.parse(fields[7]);
 

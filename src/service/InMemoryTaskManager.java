@@ -41,14 +41,24 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task createTask(Task task) {
+        if (task.getId() == 0) {
+            Task.setLastId(Task.getLastId());
+            task = new Task(task.getTaskDescription(), task.getTaskName());
+        }
+
         if (isTaskOverlapping(task)) {
             throw new IllegalArgumentException("Задача пересекается с другой задачей по времени выполнения.");
         }
+
         tasks.add(task);
         prioritizedTasks.add(task);
+
         logger.info("задача " + task.getTaskName() + " зарегистрирована. ID: " + task.getId());
+
         return task;
     }
+
+
 
     @Override
     public List<Task> getAllTasks() {
@@ -118,8 +128,13 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Epic createEpic(Epic epic) {
+        if (epic.getId() == 0) {
+            Epic.setLastId(Epic.getLastId() + 1);
+            epic = new Epic(Epic.getLastId(), epic.getTaskDescription(), epic.getTaskName(), epic.getTaskStatus());
+        }
+
         epics.add(epic);
-        logger.info("Эпик " + epic.getTaskName() + " успешно создан");
+        logger.info("Эпик " + epic.getTaskName() + " успешно создан с ID: " + epic.getId());
         return epic;
     }
 
@@ -211,21 +226,15 @@ public class InMemoryTaskManager implements TaskManager {
         return filteredEpics;
     }
 
-    @Override
     public Subtask createSubtask(Subtask subtask) {
+        logger.info("Получен epicId: " + subtask.getEpicId());
         Epic epic = findEpicById(subtask.getEpicId());
         if (epic == null) {
-            logger.info("Эпик с ID " + subtask.getEpicId() + " не найден");
+            logger.info("Не удалось найти эпик с ID " + subtask.getEpicId());
             return null;
         }
+        logger.info("Создание подзадачи с названием " + subtask.getTaskName() + " для эпика с названием " + epic.getTaskName());
         epic.addSubtask(subtask);
-        epic.recalculateFields();
-        subtasks.add(subtask);
-        if (subtask.getStartTime() != null) {
-            prioritizedTasks.add(subtask);
-        }
-        logger.info("Подзадача " + subtask.getTaskName() + " была добавлена в эпик " + epic.getTaskName());
-        updateEpicStatus(epic);
         return subtask;
     }
 

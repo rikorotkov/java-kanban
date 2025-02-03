@@ -73,7 +73,12 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
     private void handlePost(HttpExchange exchange) throws IOException {
         InputStream body = exchange.getRequestBody();
         String bodyString = new String(body.readAllBytes(), StandardCharsets.UTF_8);
+
+        // Логирование для отладки
+        System.out.println("Полученные данные: " + bodyString);
+
         Subtask subtask = gson.fromJson(bodyString, Subtask.class);
+        System.out.println("Создана подзадача с epicId: " + subtask.getEpicId());  // Логирование epicId
 
         Subtask createdSubtask = taskManager.createSubtask(subtask);
         if (createdSubtask != null) {
@@ -82,6 +87,8 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
             sendError(exchange, "Эпик не найден");
         }
     }
+
+
 
     private void handlePut(HttpExchange exchange) throws IOException {
         InputStream body = exchange.getRequestBody();

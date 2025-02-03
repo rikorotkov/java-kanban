@@ -19,6 +19,10 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
     public TaskHandler(TaskManager taskManager, Gson gson) {
         this.taskManager = taskManager;
         this.gson = GsonUtil.getGson();
+        if (taskManager.getAllTasks().size() > 0) {
+            Task lastTask = taskManager.getAllTasks().get(taskManager.getAllTasks().size() - 1);
+            Task.setLastId(lastTask.getId());
+        }
     }
 
     @Override
@@ -49,6 +53,11 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
 
     private void handleGet(HttpExchange exchange) throws IOException {
         String response = gson.toJson(taskManager.getAllTasks());
+
+        System.out.println("Serialized JSON: " + response);
+
+        exchange.getResponseHeaders().set("Content-Type", "application/json");
+
         sendText(exchange, response);
     }
 
@@ -69,7 +78,7 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
             sendError(exchange, "Ошибка обработки данных: " + e.getMessage());
         }
     }
-// TODO: PUT не работает((
+
     private void handlePut(HttpExchange exchange) throws IOException {
         String query = exchange.getRequestURI().getQuery();
         if (query != null && query.startsWith("id=")) {

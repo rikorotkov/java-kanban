@@ -1,5 +1,7 @@
 package model;
 
+import com.google.gson.annotations.Expose;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -7,13 +9,19 @@ import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
 public class Task {
+    @Expose
     protected final int id;
+    @Expose
     protected String taskName;
+    @Expose
     protected String taskDescription;
+    @Expose
     protected TaskStatus taskStatus;
+    @Expose
     protected Duration duration;
+    @Expose
     protected LocalDateTime startTime;
-
+    @Expose
     private static int lastId = 0;
 
     public Task(String taskDescription, String taskName) {
@@ -24,7 +32,7 @@ public class Task {
     }
 
     public Task(int id, String taskName, String taskDescription, TaskStatus taskStatus) {
-        this.id = id;
+        this.id = ++lastId;
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.taskStatus = taskStatus;
@@ -35,7 +43,7 @@ public class Task {
     }
 
     public Task(int id, String taskName, String taskDescription, TaskStatus status, LocalDateTime startTime, Duration duration) {
-        this.id = id;
+        this.id = ++lastId;  // Генерация нового ID
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.taskStatus = TaskStatus.NEW;
@@ -45,6 +53,16 @@ public class Task {
         }
         this.startTime = startTime;
         this.duration = duration;
+    }
+
+    public static void setLastId(int id) {
+        if (id > lastId) {
+            lastId = id;
+        }
+    }
+
+    public static int getLastId() {
+        return lastId;
     }
 
     public int getId() {
@@ -122,7 +140,6 @@ public class Task {
         String startTimeStr = (startTime != null) ? startTime.toString() : "";
         return String.format("%d,TASK,%s,%s,%s,%s,%s", id, taskName, taskStatus, taskDescription, durationStr, startTimeStr);
     }
-
 
     public Duration getDuration() {
         return duration;

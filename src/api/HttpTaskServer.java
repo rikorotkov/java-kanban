@@ -3,6 +3,7 @@ package api;
 import api.router.*;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpServer;
+import model.Task;
 import service.HistoryManager;
 import service.Managers;
 import service.TaskManager;
@@ -28,7 +29,6 @@ public class HttpTaskServer {
         server.createContext("/epics", new EpicHandler(taskManager, new Gson()));
         server.createContext("/history", new HistoryHandler(historyManager, new Gson()));
         server.createContext("/prioritized", new PrioritizeHandler(taskManager, new Gson()));
-
 
         logger.info("Сервер запущен на порту " + PORT);
     }
