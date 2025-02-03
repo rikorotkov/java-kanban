@@ -3,6 +3,7 @@ package model;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Subtask extends Task {
     private int epicId;
@@ -42,7 +43,7 @@ public class Subtask extends Task {
         String name = fields[2];
         TaskStatus status = TaskStatus.valueOf(fields[3]);
         String description = fields[4];
-        int epicId = Integer.parseInt(fields[5]); // Получаем epicId из CSV
+        int epicId = Integer.parseInt(fields[5]);
         Duration duration = fields[6].isEmpty() ? null : Duration.ofMinutes(Long.parseLong(fields[6]));
         LocalDateTime startTime = fields[7].isEmpty() ? null : LocalDateTime.parse(fields[7]);
 
@@ -52,11 +53,12 @@ public class Subtask extends Task {
         return subtask;
     }
 
+
     @Override
     public String toCsv() {
         String durationStr = (duration != null) ? String.valueOf(duration.toMinutes()) : "";
         String startTimeStr = (startTime != null) ? startTime.toString() : "";
-        return String.format("%d,SUBTASK,%s,%s,%s,%d,%s,%s", id, taskName, taskStatus, taskDescription, epicId, durationStr, startTimeStr);
+        return String.format("%d,SUBTASK,%s,%s,%s,%d,%s,%s,", id, taskName, taskStatus, taskDescription, epicId, durationStr, startTimeStr);
     }
 
     public TaskType getTaskType() {
@@ -72,5 +74,19 @@ public class Subtask extends Task {
                 ", epicId=" + epicId +
                 " , taskStatus = " + this.getTaskStatus() +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Subtask subtask = (Subtask) o;
+        return epicId == subtask.epicId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), epicId);
     }
 }

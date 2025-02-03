@@ -9,12 +9,14 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class HttpTaskServerTest {
+class HttpTaskServerTest {
     private HttpTaskServer server;
     private TaskManager taskManager;
+    private Logger logger = Logger.getLogger(HttpTaskServer.class.getName());
 
     @BeforeEach
     public void setUp() throws IOException {
@@ -30,7 +32,7 @@ public class HttpTaskServerTest {
 
     @Test
     public void testAddTask() throws IOException {
-        String jsonData = "{ \"taskName\": \"Тест\", \"taskDescription\": \"Описание\" }";
+        String jsonData = "{ \"taskName\": \"Тест\", \"taskDescription\": \"Описание\", \"taskStatus\": \"NEW\", \"duration\": \"PT1H\", \"startTime\": \"0001-01-01T01:01:00\" }";
 
         URL url = new URL("http://localhost:8080/tasks");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();

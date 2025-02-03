@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import model.Task;
+import service.Managers;
 import service.TaskManager;
 
 import java.io.IOException;
@@ -17,7 +18,7 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
     private final Gson gson;
 
     public TaskHandler(TaskManager taskManager, Gson gson) {
-        this.taskManager = taskManager;
+        this.taskManager = Managers.getDefault();
         this.gson = GsonUtil.getGson();
         if (taskManager.getAllTasks().size() > 0) {
             Task lastTask = taskManager.getAllTasks().get(taskManager.getAllTasks().size() - 1);

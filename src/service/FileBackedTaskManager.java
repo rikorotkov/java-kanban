@@ -97,7 +97,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return manager;
     }
 
-
     public HistoryManager getHistoryManager() {
         return historyManager;
     }
@@ -125,6 +124,26 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
         save();
         return createdSubtask;
+    }
+
+    @Override
+    public Task findTaskById(int id) {
+        Task task = super.findTaskById(id);
+        if (task != null) {
+            return task;
+        }
+
+        Epic epic = findEpicById(id);
+        if (epic != null) {
+            return epic;
+        }
+
+        Subtask subtask = findSubtaskById(id);
+        if (subtask != null) {
+            return subtask;
+        }
+
+        return null;
     }
 
     @Override

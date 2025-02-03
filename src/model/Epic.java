@@ -87,9 +87,9 @@
             String name = fields[2];
             TaskStatus status = TaskStatus.valueOf(fields[3]);
             String description = fields[4];
-            Duration duration = fields[5].isEmpty() ? null : Duration.ofMinutes(Long.parseLong(fields[5]));
-            LocalDateTime startTime = fields[6].isEmpty() ? null : LocalDateTime.parse(fields[6]);
-            LocalDateTime endTime = fields[7].isEmpty() ? null : LocalDateTime.parse(fields[7]);
+            Duration duration = fields[6].isEmpty() ? null : Duration.ofMinutes(Long.parseLong(fields[6]));
+            LocalDateTime startTime = fields[7].isEmpty() ? null : LocalDateTime.parse(fields[7]);
+            LocalDateTime endTime = fields.length > 8 && !fields[8].isEmpty() ? LocalDateTime.parse(fields[8]) : null;
 
             Epic epic = new Epic(id, description, name, status);
             epic.setDuration(duration);
@@ -98,12 +98,13 @@
             return epic;
         }
 
+
         @Override
         public String toCsv() {
             String durationStr = (duration != null) ? String.valueOf(duration.toMinutes()) : "";
             String startTimeStr = (startTime != null) ? startTime.toString() : "";
             String endTimeStr = (getEndTime() != null) ? getEndTime().toString() : "";
-            return String.format("%d,EPIC,%s,%s,%s,%s,%s,%s", id, taskName, taskStatus, taskDescription, durationStr, startTimeStr, endTimeStr);
+            return String.format("%d,EPIC,%s,%s,%s,,%s,%s,%s", id, taskName, taskStatus, taskDescription, durationStr, startTimeStr, endTimeStr);
         }
 
         @Override

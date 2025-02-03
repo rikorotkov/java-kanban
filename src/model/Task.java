@@ -98,47 +98,34 @@ public class Task {
     }
 
     public static Task fromCsv(String csvLine) {
-        try {
-            String[] fields = csvLine.split(",");
-            if (fields.length < 7) {
-                throw new IllegalArgumentException("Неверный формат строки CSV: недостаточно данных");
-            }
+        String[] fields = csvLine.split(",");
 
-            int id = Integer.parseInt(fields[0].trim());
-            String name = fields[2].trim();
-            TaskStatus status = TaskStatus.valueOf(fields[3].trim());
-            String description = fields[4].trim();
+        int id = Integer.parseInt(fields[0].trim());
+        String name = fields[2].trim();
+        TaskStatus status = TaskStatus.valueOf(fields[3].trim());
+        String description = fields[4].trim();
 
-            Duration duration = fields[5].isEmpty() ? null : Duration.ofMinutes(Long.parseLong(fields[5].trim()));
+        // Проверка наличия полей перед доступом
+        Duration duration = (fields.length > 6 && !fields[6].isEmpty())
+                ? Duration.ofMinutes(Long.parseLong(fields[6].trim()))
+                : null;
 
-            LocalDateTime startTime = null;
-            if (!fields[6].isEmpty()) {
-                try {
-                    startTime = LocalDateTime.parse(fields[6].trim(), DateTimeFormatter.ISO_DATE_TIME);
-                } catch (DateTimeParseException e) {
-                    System.err.println("Ошибка парсинга даты/времени в строке: " + csvLine);
-                }
-            }
+        LocalDateTime startTime = (fields.length > 7 && !fields[7].isEmpty())
+                ? LocalDateTime.parse(fields[7].trim())
+                : null;
 
-            Task task = new Task(id, name, description, status);
-            task.setDuration(duration);
-            task.setStartTime(startTime);
-            return task;
-        } catch (NumberFormatException e) {
-            System.err.println("Ошибка преобразования числа в строке: " + csvLine);
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            System.err.println("Ошибка обработки строки CSV: " + csvLine);
-            e.printStackTrace();
-        }
-
-        return null;
+        Task task = new Task(id, name, description, status);
+        task.setDuration(duration);
+        task.setStartTime(startTime);
+        return task;
     }
+
+
 
     public String toCsv() {
         String durationStr = (duration != null) ? String.valueOf(duration.toMinutes()) : "";
         String startTimeStr = (startTime != null) ? startTime.toString() : "";
-        return String.format("%d,TASK,%s,%s,%s,%s,%s", id, taskName, taskStatus, taskDescription, durationStr, startTimeStr);
+        return String.format("%d,TASK,%s,%s,%s,,%s,%s,", id, taskName, taskStatus, taskDescription, durationStr, startTimeStr);
     }
 
     public Duration getDuration() {
