@@ -28,14 +28,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             String some = reader.readLine();
             reader.lines().forEach(line -> tasks.add(Task.fromCsv(line)));
         } catch (Exception e) {
-            System.out.println("пошел нахуй");
+            System.out.println("Error reading file: " + e.getMessage());
         }
         return tasks;
     }
 
     private void save() {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
-            writer.write("id,type,name,status,description,epic");
+            writer.write("id, type, name, description, status, startTime, duration, epicId");
             writer.newLine();
 
             for (Task task : super.getAllTasks()) {
@@ -93,8 +93,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 } else if (!line.startsWith("id") && !line.isBlank()) {
                     Task task = Task.fromCsv(line);
                     if (task != null) {
-                        if (task instanceof Subtask subtask) {
-                            manager.createSubtask(subtask);
+                        if (task instanceof Subtask) {
+                            manager.createSubtask((Subtask) task);
                         } else if (task instanceof Epic) {
                             manager.createEpic((Epic) task);
                         } else {

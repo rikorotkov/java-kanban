@@ -102,16 +102,15 @@ public class Task {
 
         int id = Integer.parseInt(fields[0].trim());
         String name = fields[2].trim();
-        TaskStatus status = TaskStatus.valueOf(fields[3].trim());
-        String description = fields[4].trim();
+        String description = fields[3].trim();
+        TaskStatus status = TaskStatus.valueOf(fields[4].trim());
 
-        // Проверка наличия полей перед доступом
-        Duration duration = (fields.length > 6 && !fields[6].isEmpty())
-                ? Duration.ofMinutes(Long.parseLong(fields[6].trim()))
+        LocalDateTime startTime = (fields.length > 5 && !fields[5].isEmpty())
+                ? LocalDateTime.parse(fields[5].trim())
                 : null;
 
-        LocalDateTime startTime = (fields.length > 7 && !fields[7].isEmpty())
-                ? LocalDateTime.parse(fields[7].trim())
+        Duration duration = (fields.length > 6 && !fields[6].isEmpty())
+                ? Duration.ofMinutes(Long.parseLong(fields[6].trim()))
                 : null;
 
         Task task = new Task(id, name, description, status);
@@ -125,7 +124,7 @@ public class Task {
     public String toCsv() {
         String durationStr = (duration != null) ? String.valueOf(duration.toMinutes()) : "";
         String startTimeStr = (startTime != null) ? startTime.toString() : "";
-        return String.format("%d,TASK,%s,%s,%s,,%s,%s,", id, taskName, taskStatus, taskDescription, durationStr, startTimeStr);
+        return String.format("%d,TASK,%s,%s,%s,%s,%s,", id, taskName, taskDescription, taskStatus, startTime, durationStr);
     }
 
     public Duration getDuration() {
