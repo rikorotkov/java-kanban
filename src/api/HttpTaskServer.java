@@ -1,11 +1,10 @@
 package api;
 
+import api.router.BaseHttpHandler;
 import api.router.TaskHandler;
-import api.util.GsonUtil;
-import com.google.gson.Gson;
+import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import model.Task;
-import service.HistoryManager;
 import service.Managers;
 import service.TaskManager;
 
@@ -17,18 +16,12 @@ public class HttpTaskServer {
     private final int PORT = 8080;
     private final HttpServer server;
     private final Logger logger;
-    private final TaskManager taskManager;
-    private final HistoryManager historyManager;
-    private final Gson gson;
 
-    public HttpTaskServer() throws IOException {
+    public HttpTaskServer(TaskManager taskManager) throws IOException {
         this.server = HttpServer.create(new InetSocketAddress(PORT), 0);
         this.logger = Logger.getLogger(HttpTaskServer.class.getName());
-        this.taskManager = Managers.getDefault();
-        this.historyManager = Managers.getDefaultHistory();
-        this.gson = GsonUtil.getGson();
 
-        server.createContext("/tasks", new TaskHandler(taskManager, gson));
+        server.createContext("/tasks", new TaskHandler(taskManager));
 
         logger.info("Сервер запущен на порту: " + PORT);
     }
@@ -45,11 +38,12 @@ public class HttpTaskServer {
         Task task = new Task("Описание", "Имя");
         TaskManager taskManager = Managers.getDefault();
         taskManager.createTask(task);
-        System.out.println("CREATE TASK - "+task);
+        System.out.println("CREATE TASK - " + task);
 
         System.out.println("ALL TASKS - " + taskManager.getAllTasks());
 
-        HttpTaskServer server = new HttpTaskServer();
+        HttpTaskServer server = new HttpTaskServer(taskManager);
         server.start();
     }
+
 }

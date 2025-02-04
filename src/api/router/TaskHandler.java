@@ -1,20 +1,15 @@
 package api.router;
 
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import service.TaskManager;
 
 import java.io.IOException;
 import java.util.Map;
 
-public class TaskHandler extends BaseHttpHandler implements HttpHandler {
-    private final TaskManager taskManager;
-    private final Gson gson;
+public class TaskHandler extends BaseHttpHandler {
 
-    public TaskHandler(TaskManager taskManager, Gson gson) {
-        this.taskManager = taskManager;
-        this.gson = gson;
+    public TaskHandler(TaskManager taskManager) {
+        super(taskManager);
     }
 
     @Override
@@ -22,7 +17,7 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
         try {
             if ("GET".equals(exchange.getRequestMethod())) {
                 String response = gson.toJson(taskManager.getAllTasks());
-                sendText(exchange, response);
+                sendText(exchange, response, 200);
                 System.out.println(response);
             } else {
                 exchange.sendResponseHeaders(405, -1);
@@ -31,7 +26,7 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
             e.printStackTrace();
             String errorResponse = gson.toJson(Map.of("error", e.getMessage()));
             exchange.sendResponseHeaders(500, errorResponse.length());
-            sendText(exchange, errorResponse);
+            sendText(exchange, errorResponse, 404);
         }
     }
 }
