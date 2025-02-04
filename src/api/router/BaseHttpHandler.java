@@ -1,0 +1,18 @@
+package api.router;
+
+import com.sun.net.httpserver.HttpExchange;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
+public class BaseHttpHandler {
+    protected void sendText(HttpExchange h, String text) throws IOException {
+        byte[] resp = text.getBytes(StandardCharsets.UTF_8);
+        h.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+        h.sendResponseHeaders(200, resp.length);
+        try (var os = h.getResponseBody()) {
+            os.write(resp);
+        }
+    }
+
+}

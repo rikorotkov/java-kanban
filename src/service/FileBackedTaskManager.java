@@ -7,6 +7,7 @@ import model.Task;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -151,5 +152,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
             save();
         }
+    }
+
+    @Override
+    public List<Task> getAllTasks() {
+        return super.getAllTasks();
     }
 }

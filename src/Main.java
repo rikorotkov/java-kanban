@@ -20,6 +20,7 @@ public class Main {
         task3.setDuration(Duration.ofHours(1));
         task3.setStartTime(LocalDateTime.of(1, 1, 1, 1, 1));
         taskManager.createTask(task3);
+        System.out.println("все задачи - " + taskManager.getAllTasks());
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task3);

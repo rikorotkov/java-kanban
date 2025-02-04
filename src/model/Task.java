@@ -83,39 +83,78 @@ public class Task {
         try {
             String[] fields = csvLine.split(",");
             if (fields.length < 7) {
-                throw new IllegalArgumentException("Неверный формат строки CSV: недостаточно данных");
+                System.err.println("Неверный формат строки CSV: недостаточно данных. Строка: " + csvLine);
+                return null;
             }
 
-            int id = Integer.parseInt(fields[0].trim());
+            // Парсим ID задачи
+            int id;
+            try {
+                id = Integer.parseInt(fields[0].trim());
+            } catch (NumberFormatException e) {
+                System.err.println("Ошибка преобразования ID задачи в строке: " + csvLine);
+                return null;
+            }
+
+            // Имя задачи
             String name = fields[2].trim();
-            TaskStatus status = TaskStatus.valueOf(fields[3].trim());
+            if (name.isEmpty()) {
+                System.err.println("Имя задачи пустое в строке: " + csvLine);
+                return null;
+            }
+
+            // Статус задачи
+            TaskStatus status;
+            try {
+                status = TaskStatus.valueOf(fields[3].trim());
+            } catch (IllegalArgumentException e) {
+                System.err.println("Неверный статус задачи в строке: " + csvLine);
+                return null;
+            }
+
+            // Описание задачи
             String description = fields[4].trim();
+            if (description.isEmpty()) {
+                System.err.println("Описание задачи пустое в строке: " + csvLine);
+                return null;
+            }
 
-            Duration duration = fields[5].isEmpty() ? null : Duration.ofMinutes(Long.parseLong(fields[5].trim()));
-
-            LocalDateTime startTime = null;
-            if (!fields[6].isEmpty()) {
+            // Длительность задачи
+            Duration duration = null;
+            if (!fields[5].isEmpty()) {
                 try {
-                    startTime = LocalDateTime.parse(fields[6].trim(), DateTimeFormatter.ISO_DATE_TIME);
-                } catch (DateTimeParseException e) {
-                    System.err.println("Ошибка парсинга даты/времени в строке: " + csvLine);
+                    duration = Duration.ofMinutes(Long.parseLong(fields[5].trim()));
+                } catch (NumberFormatException e) {
+                    System.err.println("Ошибка преобразования длительности задачи в строке: " + csvLine);
+                    return null;
                 }
             }
 
+            // Время начала задачи
+            LocalDateTime startTime = null;
+            if (!fields[6].isEmpty()) {
+                try {
+                    String correctedTime = fields[6].trim().replace(",", "T"); // Исправляем запятую на T
+                    startTime = LocalDateTime.parse(correctedTime, DateTimeFormatter.ISO_DATE_TIME);
+                } catch (DateTimeParseException e) {
+                    System.err.println("Ошибка парсинга даты/времени в строке: " + csvLine);
+                    return null;
+                }
+            }
+
+            // Создаем и возвращаем задачу
             Task task = new Task(id, name, description, status);
             task.setDuration(duration);
             task.setStartTime(startTime);
             return task;
-        } catch (NumberFormatException e) {
-            System.err.println("Ошибка преобразования числа в строке: " + csvLine);
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            System.err.println("Ошибка обработки строки CSV: " + csvLine);
+
+        } catch (Exception e) {
+            System.err.println("Неизвестная ошибка при обработке строки CSV: " + csvLine);
             e.printStackTrace();
         }
-
         return null;
     }
+
 
     public String toCsv() {
         String durationStr = (duration != null) ? String.valueOf(duration.toMinutes()) : "";
