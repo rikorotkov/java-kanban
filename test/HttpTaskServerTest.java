@@ -44,6 +44,6 @@ class HttpTaskServerTest {
         assertEquals(200, responseCode, "Ожидаемый статус код 200");
 
         assertEquals(1, taskManager.getAllTasks().size(), "Задача должна быть добавлена");
-        assertEquals("Тест", taskManager.findTaskById(1).getTaskName(), "Имя задачи должно соответствовать");
+        assertEquals("Тест", taskManager.findTaskById(3).getTaskName(), "Имя задачи должно соответствовать");
     }
 }

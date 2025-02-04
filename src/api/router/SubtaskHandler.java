@@ -19,7 +19,7 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
     private final Gson gson;
 
     public SubtaskHandler(TaskManager taskManager, Gson gson) {
-        this.taskManager = Managers.getDefault();
+        this.taskManager = taskManager;
         this.gson = GsonUtil.getGson();
     }
 

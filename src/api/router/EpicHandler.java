@@ -20,7 +20,7 @@ public class EpicHandler implements HttpHandler {
     private final Gson gson;
 
     public EpicHandler(TaskManager taskManager, Gson gson) {
-        this.taskManager = Managers.getDefault();
+        this.taskManager = taskManager;
         this.gson = GsonUtil.getGson();
     }
 

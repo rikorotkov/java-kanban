@@ -18,7 +18,7 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
     private final Gson gson;
 
     public TaskHandler(TaskManager taskManager, Gson gson) {
-        this.taskManager = Managers.getDefault();
+        this.taskManager = taskManager;
         this.gson = GsonUtil.getGson();
         if (taskManager.getAllTasks().size() > 0) {
             Task lastTask = taskManager.getAllTasks().get(taskManager.getAllTasks().size() - 1);

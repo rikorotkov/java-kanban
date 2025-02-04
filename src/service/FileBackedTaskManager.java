@@ -7,6 +7,7 @@ import model.Task;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -20,12 +21,24 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.historyManager = Managers.getDefaultHistory();
     }
 
+    @Override
+    public List<Task> getAllTasks() {
+        List<Task> tasks = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
+            String some = reader.readLine();
+            reader.lines().forEach(line -> tasks.add(Task.fromCsv(line)));
+        } catch (Exception e) {
+            System.out.println("пошел нахуй");
+        }
+        return tasks;
+    }
+
     private void save() {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
             writer.write("id,type,name,status,description,epic");
             writer.newLine();
 
-            for (Task task : getAllTasks()) {
+            for (Task task : super.getAllTasks()) {
                 writer.write(task.toCsv());
                 writer.newLine();
             }
@@ -80,8 +93,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 } else if (!line.startsWith("id") && !line.isBlank()) {
                     Task task = Task.fromCsv(line);
                     if (task != null) {
-                        if (task instanceof Subtask) {
-                            manager.createSubtask((Subtask) task);
+                        if (task instanceof Subtask subtask) {
+                            manager.createSubtask(subtask);
                         } else if (task instanceof Epic) {
                             manager.createEpic((Epic) task);
                         } else {
@@ -128,22 +141,27 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public Task findTaskById(int id) {
-        Task task = super.findTaskById(id);
-        if (task != null) {
-            return task;
-        }
-
-        Epic epic = findEpicById(id);
-        if (epic != null) {
-            return epic;
-        }
-
-        Subtask subtask = findSubtaskById(id);
-        if (subtask != null) {
-            return subtask;
-        }
-
-        return null;
+        return getAllTasks()
+                .stream()
+                .filter(task -> task.getId() == id)
+                .findFirst()
+                .orElseThrow();
+//        Task task = super.findTaskById(id);
+//        if (task != null) {
+//            return task;
+//        }
+//
+//        Epic epic = findEpicById(id);
+//        if (epic != null) {
+//            return epic;
+//        }
+//
+//        Subtask subtask = findSubtaskById(id);
+//        if (subtask != null) {
+//            return subtask;
+//        }
+//
+//        return null;
     }
 
     @Override
