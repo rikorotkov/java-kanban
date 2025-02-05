@@ -1,3 +1,5 @@
+import model.Epic;
+import model.Subtask;
 import model.Task;
 import service.HistoryManager;
 import service.Managers;
@@ -23,6 +25,11 @@ public class Main {
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task3);
+
+        Epic epic = new Epic("Новый эпик", "Эпик 1");
+        Subtask stask = new Subtask("Описание сабтаски","Сабтаска 1", epic.getId());
+        taskManager.createEpic(epic);
+        taskManager.createSubtask(stask);
 
         logger.info("История: " + historyManager.getHistory());
         historyManager.add(task2);

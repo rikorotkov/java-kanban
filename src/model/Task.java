@@ -119,12 +119,10 @@ public class Task {
         return task;
     }
 
-
-
     public String toCsv() {
         String durationStr = (duration != null) ? String.valueOf(duration.toMinutes()) : "";
         String startTimeStr = (startTime != null) ? startTime.toString() : "";
-        return String.format("%d,TASK,%s,%s,%s,%s,%s,", id, taskName, taskDescription, taskStatus, startTime, durationStr);
+        return String.format("%d,TASK,%s,%s,%s,%s,%s,", id, taskName, taskDescription, taskStatus, startTimeStr, durationStr);
     }
 
     public Duration getDuration() {
