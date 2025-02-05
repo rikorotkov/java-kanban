@@ -235,6 +235,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         logger.info("Создание подзадачи с названием " + subtask.getTaskName() + " для эпика с названием " + epic.getTaskName());
         epic.addSubtask(subtask);
+        subtasks.add(subtask);
         return subtask;
     }
 

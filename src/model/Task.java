@@ -103,7 +103,10 @@ public class Task {
         int id = Integer.parseInt(fields[0].trim());
         String name = fields[2].trim();
         String description = fields[3].trim();
-        TaskStatus status = TaskStatus.valueOf(fields[4].trim());
+
+        TaskStatus status = (fields[4] != null && !fields[4].trim().isEmpty() && !"null".equalsIgnoreCase(fields[4].trim()))
+                ? TaskStatus.valueOf(fields[4].trim())
+                : TaskStatus.NEW;
 
         LocalDateTime startTime = (fields.length > 5 && !fields[5].isEmpty() && !"null".equals(fields[5].trim()))
                 ? LocalDateTime.parse(fields[5].trim())
@@ -122,7 +125,15 @@ public class Task {
     public String toCsv() {
         String durationStr = (duration != null) ? String.valueOf(duration.toMinutes()) : "";
         String startTimeStr = (startTime != null) ? startTime.toString() : "";
-        return String.format("%d,TASK,%s,%s,%s,%s,%s,", id, taskName, taskDescription, taskStatus, startTimeStr, durationStr);
+        return String.format("%d,%s,%s,%s,%s,%s,%s,",
+                id,
+                getType(),
+                taskName,
+                taskDescription,
+                taskStatus,
+                startTimeStr,
+                durationStr
+        );
     }
 
     public Duration getDuration() {

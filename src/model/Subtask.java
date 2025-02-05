@@ -43,7 +43,10 @@ public class Subtask extends Task {
         int id = Integer.parseInt(fields[0]);
         String name = fields[2];
         String description = fields[3];
-        TaskStatus status = TaskStatus.valueOf(fields[4]);
+
+        TaskStatus status = (fields[4] != null && !fields[4].trim().isEmpty() && !"null".equalsIgnoreCase(fields[4].trim()))
+                ? TaskStatus.valueOf(fields[4].trim())
+                : TaskStatus.NEW;
 
         LocalDateTime startTime = (fields.length > 5 && !fields[5].isEmpty() && !"null".equals(fields[5].trim()))
                 ? LocalDateTime.parse(fields[5].trim())
@@ -63,12 +66,14 @@ public class Subtask extends Task {
 
     @Override
     public String toCsv() {
-        String durationStr = (duration != null) ? String.valueOf(duration.toMinutes()) : "";
-        String startTimeStr = (startTime != null) ? startTime.toString() : "";
-        return String.format("%d,SUBTASK,%s,%s,%s,%s,%s,%s", id, taskName, taskDescription, taskStatus, startTimeStr, durationStr, epicId);
+//        String durationStr = (duration != null) ? String.valueOf(duration.toMinutes()) : "";
+//        String startTimeStr = (startTime != null) ? startTime.toString() : "";
+//        return String.format("%d,SUBTASK,%s,%s,%s,%s,%s,%s", id, taskName, taskDescription, taskStatus, startTimeStr, durationStr, epicId);
+        return super.toCsv() + "," + epicId;
     }
 
-    public TaskType getTaskType() {
+    @Override
+    public TaskType getType() {
         return TaskType.SUBTASK;
     }
 
