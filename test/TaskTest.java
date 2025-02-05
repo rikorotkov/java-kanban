@@ -17,7 +17,7 @@ class TaskTest {
 
     @BeforeEach
     public void setUp() {
-        taskManager = Managers.getDefault();
+        taskManager = Managers.InMemory();
     }
 
     @Test
