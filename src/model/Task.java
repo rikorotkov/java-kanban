@@ -105,7 +105,7 @@ public class Task {
         String description = fields[3].trim();
         TaskStatus status = TaskStatus.valueOf(fields[4].trim());
 
-        LocalDateTime startTime = (fields.length > 5 && !fields[5].isEmpty())
+        LocalDateTime startTime = (fields.length > 5 && !fields[5].isEmpty() && !"null".equals(fields[5].trim()))
                 ? LocalDateTime.parse(fields[5].trim())
                 : null;
 
