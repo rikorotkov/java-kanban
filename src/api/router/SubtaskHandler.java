@@ -75,28 +75,30 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
         }
     }
 
-    //TODO: Не записывает подзадачу
     private void handlePost(HttpExchange exchange) throws IOException {
-        InputStream body = exchange.getRequestBody();
-        String bodyString = new String(body.readAllBytes(), StandardCharsets.UTF_8);
+        try {
+            InputStream body = exchange.getRequestBody();
+            String bodyString = new String(body.readAllBytes(), StandardCharsets.UTF_8);
+            System.out.println("Исходный JSON: " + bodyString);
 
-        System.out.println("Полученные данные: " + bodyString);
+            Subtask subtask = gson.fromJson(bodyString, Subtask.class);
+            System.out.println("После десериализации: epicId = " + subtask.getEpicId());
 
-        Subtask subtask = gson.fromJson(bodyString, Subtask.class);
-        System.out.println("Создана подзадача с epicId: " + subtask.getEpicId());
+            System.out.println("Создана подзадача с epicId: " + subtask.getEpicId());
 
-        System.out.println("Подзадача после десериализации: " + subtask);
-        System.out.println("epicId после десериализации: " + subtask.getEpicId());
+            System.out.println("epicId после десериализации: " + subtask.getEpicId());
 
-        Subtask createdSubtask = taskManager.createSubtask(subtask);
+            Subtask createdSubtask = taskManager.createSubtask(subtask);
 
-        if (createdSubtask != null) {
-            sendResponse(exchange, gson.toJson(createdSubtask), 201);
-        } else {
-            sendError(exchange, "Эпик не найден");
+            if (createdSubtask != null) {
+                sendResponse(exchange, gson.toJson(createdSubtask), 201);
+            } else {
+                sendError(exchange, "Эпик не найден");
+            }
+        } catch (Exception e) {
+            sendError(exchange, "Ошибка обработки данных " + e.getMessage());
         }
     }
-
 
     private void handlePut(HttpExchange exchange) throws IOException {
         InputStream body = exchange.getRequestBody();

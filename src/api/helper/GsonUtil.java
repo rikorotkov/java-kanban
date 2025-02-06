@@ -13,6 +13,7 @@ public class GsonUtil {
             .registerTypeAdapter(Duration.class, new DurationAdapter())
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .excludeFieldsWithoutExposeAnnotation()  // Это исключит поля без @Expose
+            .serializeNulls()
             .create();
 
     public static Gson getGson() {

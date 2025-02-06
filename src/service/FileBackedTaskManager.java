@@ -130,6 +130,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public Subtask createSubtask(Subtask subtask) {
+        System.out.println("Перед созданием subtask: epicId = " + subtask.getEpicId());
+
         Subtask createdSubtask = super.createSubtask(subtask);
         Epic epic = findEpicById(subtask.getEpicId());
         if (epic != null) {

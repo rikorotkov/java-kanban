@@ -1,5 +1,6 @@
 package model;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.time.Duration;
@@ -9,18 +10,20 @@ import java.util.Objects;
 
 public class Subtask extends Task {
     @SerializedName("epicId")
+    @Expose
     private int epicId;
 
     public Subtask(String taskDescription, String taskName, int epicId) {
         super(taskDescription, taskName);
         this.epicId = epicId;
-        this.taskStatus = TaskStatus.NEW;
     }
 
     public Subtask(int id, String taskName, String taskDescription, TaskStatus taskStatus, int epicId) {
-        super(id, taskDescription, taskName, taskStatus);
+        super(id, taskName, taskDescription, taskStatus);
+        System.out.println("Создана подзадача с id: " + this.getId());
         this.epicId = epicId;
     }
+
 
     public int getEpicId() {
         System.out.println(epicId);
