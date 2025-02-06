@@ -10,7 +10,7 @@ import java.util.Objects;
 
 public class Task {
     @Expose
-    protected final int id;
+    protected int id;
     @Expose
     protected String taskName;
     @Expose
@@ -32,7 +32,7 @@ public class Task {
     }
 
     public Task(int id, String taskName, String taskDescription, TaskStatus taskStatus) {
-        this.id = ++lastId;
+        this.id = id;
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.taskStatus = taskStatus;

@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import model.Subtask;
+import model.Task;
 import service.Managers;
 import service.TaskManager;
 
@@ -21,6 +22,10 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
     public SubtaskHandler(TaskManager taskManager, Gson gson) {
         this.taskManager = taskManager;
         this.gson = GsonUtil.getGson();
+        if (taskManager.getAllTasks().size() > 0) {
+            Task lastTask = taskManager.getAllTasks().get(taskManager.getAllTasks().size() - 1);
+            Task.setLastId(lastTask.getId());
+        }
     }
 
     @Override
@@ -70,24 +75,27 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
         }
     }
 
+    //TODO: Не записывает подзадачу
     private void handlePost(HttpExchange exchange) throws IOException {
         InputStream body = exchange.getRequestBody();
         String bodyString = new String(body.readAllBytes(), StandardCharsets.UTF_8);
 
-        // Логирование для отладки
         System.out.println("Полученные данные: " + bodyString);
 
         Subtask subtask = gson.fromJson(bodyString, Subtask.class);
-        System.out.println("Создана подзадача с epicId: " + subtask.getEpicId());  // Логирование epicId
+        System.out.println("Создана подзадача с epicId: " + subtask.getEpicId());
+
+        System.out.println("Подзадача после десериализации: " + subtask);
+        System.out.println("epicId после десериализации: " + subtask.getEpicId());
 
         Subtask createdSubtask = taskManager.createSubtask(subtask);
+
         if (createdSubtask != null) {
             sendResponse(exchange, gson.toJson(createdSubtask), 201);
         } else {
             sendError(exchange, "Эпик не найден");
         }
     }
-
 
 
     private void handlePut(HttpExchange exchange) throws IOException {

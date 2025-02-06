@@ -26,6 +26,7 @@ public class Main {
         Subtask stask = new Subtask("Описание сабтаски","Сабтаска 1", epic.getId());
         taskManager.createEpic(epic);
         taskManager.createSubtask(stask);
-
+        Epic findEpic = taskManager.findEpicById(2);
+        System.out.println("ищу эпик по id " + findEpic);
     }
 }

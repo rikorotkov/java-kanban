@@ -1,16 +1,20 @@
 package model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class Subtask extends Task {
+    @SerializedName("epicId")
     private int epicId;
 
     public Subtask(String taskDescription, String taskName, int epicId) {
         super(taskDescription, taskName);
         this.epicId = epicId;
+        this.taskStatus = TaskStatus.NEW;
     }
 
     public Subtask(int id, String taskName, String taskDescription, TaskStatus taskStatus, int epicId) {
@@ -66,10 +70,7 @@ public class Subtask extends Task {
 
     @Override
     public String toCsv() {
-//        String durationStr = (duration != null) ? String.valueOf(duration.toMinutes()) : "";
-//        String startTimeStr = (startTime != null) ? startTime.toString() : "";
-//        return String.format("%d,SUBTASK,%s,%s,%s,%s,%s,%s", id, taskName, taskDescription, taskStatus, startTimeStr, durationStr, epicId);
-        return super.toCsv() + "," + epicId;
+        return super.toCsv() + epicId;
     }
 
     @Override
