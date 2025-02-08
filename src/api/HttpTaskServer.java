@@ -29,7 +29,7 @@ public class HttpTaskServer {
         server.createContext("/tasks", new TaskHandler(taskManager, new Gson()));
         server.createContext("/subtasks", new SubtaskHandler(taskManager, new Gson()));
         server.createContext("/epics", new EpicHandler(taskManager, new Gson()));
-        server.createContext("/history", new HistoryHandler(historyManager, new Gson()));
+        server.createContext("/history", new HistoryHandler(taskManager, new Gson()));
         server.createContext("/prioritized", new PrioritizeHandler(taskManager, new Gson()));
 
         logger.info("Сервер запущен на порту " + PORT);

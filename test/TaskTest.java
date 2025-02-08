@@ -17,7 +17,7 @@ class TaskTest {
 
     @BeforeEach
     public void setUp() {
-        taskManager = Managers.InMemory();
+        taskManager = Managers.getDefault();
     }
 
     @Test
@@ -32,8 +32,8 @@ class TaskTest {
         final List<Task> tasks = taskManager.getAllTasks();
 
         assertNotNull(tasks, "Задачи не возвращаются");
-//        assertEquals(1, tasks.size(), "Неверное количество задач");
-//        assertEquals(task, tasks.getFirst(), "Задачи не совпадают");
+        assertEquals(1, tasks.size(), "Неверное количество задач");
+        assertEquals(task, tasks.getFirst(), "Задачи не совпадают");
     }
 
     @Test

@@ -7,6 +7,7 @@ import com.sun.net.httpserver.HttpHandler;
 import model.Task;
 import service.HistoryManager;
 import service.Managers;
+import service.TaskManager;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -15,11 +16,11 @@ import java.util.List;
 
 public class HistoryHandler implements HttpHandler {
 
-    private final HistoryManager historyManager;
+    private final TaskManager taskManager;
     private final Gson gson;
 
-    public HistoryHandler(HistoryManager historyManager, Gson gson) {
-        this.historyManager = Managers.getDefaultHistory();
+    public HistoryHandler(TaskManager taskManager, Gson gson) {
+        this.taskManager = Managers.getDefault();
         this.gson = GsonUtil.getGson();
     }
 
@@ -32,8 +33,10 @@ public class HistoryHandler implements HttpHandler {
         try {
             switch (requestMethod) {
                 case "GET":
-                    List<Task> history = historyManager.getHistory();
+                    List<Task> history = taskManager.getHistory();
+                    System.out.println("История до " + history);
                     response = gson.toJson(history);
+                    System.out.println("История после " + history);
                     break;
                 default:
                     response = "{\"error\": \"Метод не доступен\"}";

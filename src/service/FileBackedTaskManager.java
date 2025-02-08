@@ -78,20 +78,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
             String line;
+
             while ((line = reader.readLine()) != null) {
-                if (line.equals("history")) {
-                    line = reader.readLine();
-                    if (line != null && !line.isBlank()) {
-                        String[] ids = line.split(",");
-                        for (String id : ids) {
-                            Task task = manager.findTaskById(Integer.parseInt(id.trim()));
-                            if (task != null) {
-                                manager.getHistoryManager().add(task);
-                            }
-                        }
-                    }
+                if (line.equals("history")) { // Если это заголовок истории
+                    manager.loadHistoryFromFile(reader); // Загружаем историю
+                    break; // После истории ничего не читаем
                 } else if (!line.startsWith("id") && !line.isBlank()) {
-                    Task task = Task.fromCsv(line);
+                    Task task = Task.fromCsv(line); // Парсим задачу
                     if (task != null) {
                         if (task instanceof Subtask) {
                             manager.createSubtask((Subtask) task);
@@ -109,6 +102,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         return manager;
     }
+
+
 
     public HistoryManager getHistoryManager() {
         return historyManager;
@@ -143,27 +138,27 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public Task findTaskById(int id) {
-        return getAllTasks()
-                .stream()
-                .filter(task -> task.getId() == id)
-                .findFirst()
-                .orElseThrow();
-//        Task task = super.findTaskById(id);
-//        if (task != null) {
-//            return task;
-//        }
-//
-//        Epic epic = findEpicById(id);
-//        if (epic != null) {
-//            return epic;
-//        }
-//
-//        Subtask subtask = findSubtaskById(id);
-//        if (subtask != null) {
-//            return subtask;
-//        }
-//
-//        return null;
+//        return getAllTasks()
+//                .stream()
+//                .filter(task -> task.getId() == id)
+//                .findFirst()
+//                .orElseThrow();
+        Task task = super.findTaskById(id);
+        if (task != null) {
+            return task;
+        }
+
+        Epic epic = findEpicById(id);
+        if (epic != null) {
+            return epic;
+        }
+
+        Subtask subtask = findSubtaskById(id);
+        if (subtask != null) {
+            return subtask;
+        }
+
+        return null;
     }
 
     @Override
@@ -189,6 +184,36 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             }
 
             save();
+        }
+    }
+
+    @Override
+    public List<Task> getHistory() {
+        return historyManager.getHistory(); // Возвращаем историю из памяти
+    }
+
+
+    private void loadHistoryFromFile(BufferedReader reader) throws IOException {
+        String line = reader.readLine(); // Читаем строку с ID
+
+        if (line != null && !line.isBlank()) {
+            String[] ids = line.split(",");
+            for (String id : ids) {
+                id = id.trim();
+                if (!id.isEmpty()) {
+                    try {
+                        int taskId = Integer.parseInt(id);
+                        Task task = findTaskById(taskId);
+                        if (task != null) {
+                            getHistoryManager().add(task);
+                        } else {
+                            System.out.println("Не найдена задача с id: " + taskId);
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Ошибка парсинга ID: " + id);
+                    }
+                }
+            }
         }
     }
 }
