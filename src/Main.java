@@ -23,8 +23,8 @@ public class Main {
         historyManager.add(task);
 
         Epic epic = new Epic("Новый эпик", "Эпик 1");
-        Subtask stask = new Subtask("Описание сабтаски","Сабтаска 1", epic.getId());
         taskManager.createEpic(epic);
+        Subtask stask = new Subtask("Описание сабтаски","Сабтаска 1", epic.getId());
         taskManager.createSubtask(stask);
         Epic findEpic = taskManager.findEpicById(2);
         System.out.println("ищу эпик по id " + findEpic);
