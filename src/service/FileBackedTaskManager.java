@@ -125,17 +125,32 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public Subtask createSubtask(Subtask subtask) {
+        // Убедимся, что ID обновляется правильно перед созданием подзадачи
         System.out.println("Перед созданием subtask: id = " + subtask.getId() + ", epicId = " + subtask.getEpicId());
+
+        // Проверяем текущий последний ID и обновляем его, если нужно
+        if (subtask.getId() == 0) {
+            subtask.setId(Task.getLastId() + 1);  // Присваиваем уникальный ID
+            Task.setLastId(subtask.getId());  // Обновляем последний ID
+        }
+
+        // Создаем подзадачу
         Subtask createdSubtask = super.createSubtask(subtask);
         System.out.println("После создания subtask: id = " + createdSubtask.getId());
 
+        // Если эпик существует, обновляем его поля
         Epic epic = findEpicById(subtask.getEpicId());
         if (epic != null) {
             epic.recalculateFields();
         }
+
+        // Сохраняем изменения
         save();
         return createdSubtask;
     }
+
+
+
 
     @Override
     public Task findTaskById(int id) {

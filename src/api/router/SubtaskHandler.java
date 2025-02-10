@@ -84,9 +84,10 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
             Subtask subtask = gson.fromJson(bodyString, Subtask.class);
             System.out.println("После десериализации: epicId = " + subtask.getEpicId());
 
-            System.out.println("Создана подзадача с epicId: " + subtask.getEpicId());
+            // Обновляем lastId перед созданием подзадачи
+            Task.setLastId(subtask.getId()); // Убедись, что мы задаем ID перед сохранением
 
-            System.out.println("epicId после десериализации: " + subtask.getEpicId());
+            System.out.println("Создана подзадача с epicId: " + subtask.getEpicId());
 
             Subtask createdSubtask = taskManager.createSubtask(subtask);
 

@@ -24,6 +24,10 @@ public class Task {
     @Expose
     private static int lastId = 0;
 
+    public Task() {
+        this.id = ++lastId;
+    }
+
     public Task(String taskDescription, String taskName) {
         this.id = ++lastId;
         this.taskDescription = taskDescription;
@@ -37,13 +41,11 @@ public class Task {
         this.taskDescription = taskDescription;
         this.taskStatus = taskStatus;
 
-        if (id > lastId) {
-            lastId = id;
-        }
+        lastId = Math.max(lastId, id);
     }
 
     public Task(int id, String taskName, String taskDescription, TaskStatus status, LocalDateTime startTime, Duration duration) {
-        this.id = ++lastId;  // Генерация нового ID
+        this.id = ++lastId;
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.taskStatus = TaskStatus.NEW;
@@ -55,10 +57,12 @@ public class Task {
         this.duration = duration;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public static void setLastId(int id) {
-        if (id > lastId) {
-            lastId = id;
-        }
+        lastId = Math.max(lastId, id);
     }
 
     public static int getLastId() {
