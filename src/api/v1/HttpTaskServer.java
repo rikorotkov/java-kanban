@@ -11,12 +11,12 @@ import java.net.InetSocketAddress;
 import java.util.logging.Logger;
 
 public class HttpTaskServer {
-    private final int PORT = 8080;
+    private final int port = 8080;
     private final HttpServer server;
     private final Logger logger;
 
     public HttpTaskServer(TaskManager taskManager) throws IOException {
-        this.server = HttpServer.create(new InetSocketAddress(PORT), 0);
+        this.server = HttpServer.create(new InetSocketAddress(port), 0);
         this.logger = Logger.getLogger(HttpTaskServer.class.getName());
 
         server.createContext("/tasks", new TaskHandler(taskManager));
@@ -25,7 +25,7 @@ public class HttpTaskServer {
         server.createContext("/history", new HistoryHandler(taskManager));
         server.createContext("/prioritized", new PrioritizedHandler(taskManager));
 
-        logger.info("Сервер запущен на порту: " + PORT);
+        logger.info("Сервер запущен на порту: " + port);
     }
 
     public void start() {
