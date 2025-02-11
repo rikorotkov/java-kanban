@@ -1,12 +1,11 @@
 import api.helper.GsonUtil;
-import api.v2.HttpTaskServer;
+import api.v1.HttpTaskServer;
 import com.google.gson.Gson;
 import model.Task;
 import model.TaskStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
-import service.InMemoryTaskManager;
 import service.Managers;
 import service.TaskManager;
 

@@ -1,4 +1,4 @@
-package api.v2.router;
+package api.v1.router;
 
 import com.sun.net.httpserver.HttpExchange;
 import service.TaskManager;
@@ -6,9 +6,9 @@ import service.TaskManager;
 import java.io.IOException;
 import java.util.Map;
 
-public class HistoryHandler extends BaseHttp {
+public class PrioritizedHandler extends BaseHttp {
 
-    public HistoryHandler(TaskManager taskManager) {
+    public PrioritizedHandler(TaskManager taskManager) {
         super(taskManager);
     }
 
@@ -27,7 +27,8 @@ public class HistoryHandler extends BaseHttp {
     }
 
     private void handleGet(HttpExchange exchange) throws IOException {
-        String response = gson.toJson(taskManager.getHistory());
+        String response = gson.toJson(taskManager.getPrioritizedTasks());
         sendText(exchange, response, 200);
     }
+
 }
