@@ -1,5 +1,5 @@
-import api.HttpTaskServer;
 import api.helper.GsonUtil;
+import api.v2.HttpTaskServer;
 import com.google.gson.Gson;
 import model.Task;
 import model.TaskStatus;
@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import service.InMemoryTaskManager;
+import service.Managers;
 import service.TaskManager;
 
 import java.io.IOException;
@@ -25,9 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class HttpTaskManagerTasksTest {
     Logger logger = Logger.getLogger(HttpTaskManagerTasksTest.class.getName());
     // создаём экземпляр InMemoryTaskManager
-    TaskManager manager = new InMemoryTaskManager(logger);
+    TaskManager manager = Managers.InMemory();
     // передаём его в качестве аргумента в конструктор HttpTaskServer
-    HttpTaskServer taskServer = new HttpTaskServer();
+    HttpTaskServer taskServer = new HttpTaskServer(manager);
     Gson gson = GsonUtil.getGson();
 
     public HttpTaskManagerTasksTest() throws IOException {
@@ -60,7 +61,7 @@ public class HttpTaskManagerTasksTest {
         // вызываем рест, отвечающий за создание задач
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         // проверяем код ответа
-        assertEquals(200, response.statusCode());
+        assertEquals(201, response.statusCode());
 
         // проверяем, что создалась одна задача с корректным именем
         List<Task> tasksFromManager = manager.getAllTasks();
