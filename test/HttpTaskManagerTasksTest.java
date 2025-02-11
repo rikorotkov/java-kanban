@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class HttpTaskManagerTasksTest {
     Logger logger = Logger.getLogger(HttpTaskManagerTasksTest.class.getName());
     // создаём экземпляр InMemoryTaskManager
-    TaskManager manager = Managers.InMemory();
+    TaskManager manager = Managers.inMemory();
     // передаём его в качестве аргумента в конструктор HttpTaskServer
     HttpTaskServer taskServer = new HttpTaskServer(manager);
     Gson gson = GsonUtil.getGson();

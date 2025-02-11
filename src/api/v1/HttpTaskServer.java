@@ -38,7 +38,7 @@ public class HttpTaskServer {
 
     public static void main(String[] args) throws IOException {
         Task task = new Task("Описание", "Имя");
-        TaskManager taskManager = Managers.InMemory();
+        TaskManager taskManager = Managers.inMemory();
         taskManager.createTask(task);
         System.out.println("CREATE TASK - " + task);
 
