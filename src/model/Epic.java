@@ -31,6 +31,7 @@
         public void addSubtask(Subtask subtask) {
             subtasks.add(subtask);
             recalculateFields();
+            updateStatus();
         }
 
         public ArrayList<Subtask> getSubtasks() {
@@ -76,6 +77,34 @@
                     .max(LocalDateTime::compareTo)
                     .orElse(null);
         }
+
+        public void updateStatus() {
+            if (subtasks.isEmpty()) {
+                setTaskStatus(TaskStatus.NEW);
+                return;
+            }
+
+            boolean allDone = true;
+            boolean allNew = true;
+
+            for (Subtask subtask : subtasks) {
+                if (subtask.getTaskStatus() != TaskStatus.DONE) {
+                    allDone = false;
+                }
+                if (subtask.getTaskStatus() != TaskStatus.NEW) {
+                    allNew = false;
+                }
+            }
+
+            if (allDone) {
+                setTaskStatus(TaskStatus.DONE);
+            } else if (allNew) {
+                setTaskStatus(TaskStatus.NEW);
+            } else {
+                setTaskStatus(TaskStatus.IN_PROGRESS);
+            }
+        }
+
 
         @Override
         public TaskType getType() {
