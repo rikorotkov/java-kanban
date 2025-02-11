@@ -20,7 +20,7 @@ class HttpTaskServerTest {
 
     @BeforeEach
     public void setUp() throws IOException {
-        taskManager = Managers.getDefault();
+        taskManager = Managers.InMemory();
         server = new HttpTaskServer();
         server.start();
     }
