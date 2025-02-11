@@ -22,6 +22,7 @@ class TaskTest {
 
     @Test
     public void addNewTask() {
+        taskManager.deleteAllTasks();
         Task task = new Task("Описание задачи", "Имя задачи");
         taskManager.createTask(task);
 
