@@ -25,7 +25,6 @@ public abstract class BaseHttp implements HttpHandler {
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(resp);
         }
-        httpExchange.close();
     }
 
     protected void sendNotFound(HttpExchange httpExchange) throws IOException {

@@ -5,8 +5,11 @@ import service.TaskManager;
 import model.Epic;
 import java.io.IOException;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class EpicHandler extends BaseHttp {
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     public EpicHandler(TaskManager taskManager) {
         super(taskManager);
@@ -25,7 +28,7 @@ public class EpicHandler extends BaseHttp {
                 sendNotFound(exchange);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error occurred while processing request", e);
             String errorResponse = gson.toJson(Map.of("error", e.getMessage()));
             sendText(exchange, errorResponse, 500);
         }

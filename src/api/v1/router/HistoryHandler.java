@@ -23,6 +23,8 @@ public class HistoryHandler extends BaseHttp {
             e.printStackTrace();
             String errorResponse = gson.toJson(Map.of("error", e.getMessage()));
             sendText(exchange, errorResponse, 400);
+        } finally {
+            exchange.close();
         }
     }
 

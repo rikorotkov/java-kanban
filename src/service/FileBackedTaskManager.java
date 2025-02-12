@@ -151,11 +151,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public Task findTaskById(int id) {
-//        return getAllTasks()
-//                .stream()
-//                .filter(task -> task.getId() == id)
-//                .findFirst()
-//                .orElseThrow();
         Task task = super.findTaskById(id);
         if (task != null) {
             return task;

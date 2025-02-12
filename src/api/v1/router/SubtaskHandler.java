@@ -18,7 +18,15 @@ public class SubtaskHandler extends BaseHttp {
         try {
             String method = exchange.getRequestMethod();
             String path = exchange.getRequestURI().getPath();
-            int subtaskId = parsePathId(path.substring(path.lastIndexOf('/') + 1));
+            String[] pathParts = path.split("/");
+            int subtaskId = -1;
+
+            if (pathParts.length > 2) {
+                String idPart = pathParts[pathParts.length - 1];
+                if (idPart.matches("\\d+")) {
+                    subtaskId = parsePathId(idPart);
+                }
+            }
 
             switch (method) {
                 case "GET":
@@ -43,19 +51,26 @@ public class SubtaskHandler extends BaseHttp {
                     if (subtaskId > 0) {
                         String updateBody = readText(exchange);
                         Subtask updatedSubtask = gson.fromJson(updateBody, Subtask.class);
-                        Subtask result = taskManager.updateSubtask(subtaskId, updatedSubtask.getTaskDescription(), updatedSubtask.getTaskName(), updatedSubtask.getTaskStatus());
+                        Subtask result = taskManager.updateSubtask(
+                                subtaskId,
+                                updatedSubtask.getTaskDescription(),
+                                updatedSubtask.getTaskName(),
+                                updatedSubtask.getTaskStatus()
+                        );
                         sendText(exchange, gson.toJson(result), 200);
                     } else {
-                        sendNotFound(exchange);
+                        sendText(exchange, gson.toJson(Map.of("error", "Invalid subtask ID")), 400);
                     }
                     break;
                 case "DELETE":
                     if (subtaskId > 0) {
                         taskManager.deleteSubtask(subtaskId);
                         sendText(exchange, "Subtask deleted", 200);
-                    } else {
+                    } else if (subtaskId == -1) {
                         taskManager.deleteAllSubtasks();
                         sendText(exchange, "All subtasks deleted", 200);
+                    } else {
+                        sendText(exchange, gson.toJson(Map.of("error", "Invalid subtask ID")), 400);
                     }
                     break;
                 default:
@@ -64,6 +79,8 @@ public class SubtaskHandler extends BaseHttp {
         } catch (Exception e) {
             String errorResponse = gson.toJson(Map.of("error", e.getMessage()));
             sendText(exchange, errorResponse, 500);
+        } finally {
+            exchange.close();
         }
     }
 }
