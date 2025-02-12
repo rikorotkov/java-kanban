@@ -48,6 +48,10 @@ public class Managers {
 //        return new InMemoryTaskManager(Logger.getLogger("default"));
     }
 
+    public static TaskManager inMemory() {
+        return new InMemoryTaskManager(Logger.getLogger("InMemory"));
+    }
+
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
     }

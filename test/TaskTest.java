@@ -22,6 +22,7 @@ class TaskTest {
 
     @Test
     public void addNewTask() {
+        taskManager.deleteAllTasks();
         Task task = new Task("Описание задачи", "Имя задачи");
         taskManager.createTask(task);
 
@@ -32,8 +33,8 @@ class TaskTest {
         final List<Task> tasks = taskManager.getAllTasks();
 
         assertNotNull(tasks, "Задачи не возвращаются");
-//        assertEquals(1, tasks.size(), "Неверное количество задач");
-//        assertEquals(task, tasks.getFirst(), "Задачи не совпадают");
+        assertEquals(1, tasks.size(), "Неверное количество задач");
+        assertEquals(task, tasks.getFirst(), "Задачи не совпадают");
     }
 
     @Test

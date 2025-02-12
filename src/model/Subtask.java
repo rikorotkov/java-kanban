@@ -1,10 +1,16 @@
 package model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Subtask extends Task {
+    @SerializedName("epicId")
+    @Expose
     private int epicId;
 
     public Subtask(String taskDescription, String taskName, int epicId) {
@@ -13,12 +19,20 @@ public class Subtask extends Task {
     }
 
     public Subtask(int id, String taskName, String taskDescription, TaskStatus taskStatus, int epicId) {
-        super(id, taskDescription, taskName, taskStatus);
+        super(id, taskName, taskDescription, taskStatus);
+        System.out.println("Создана подзадача с id: " + this.getId());
         this.epicId = epicId;
     }
 
+
     public int getEpicId() {
+        System.out.println(epicId);
         return epicId;
+    }
+
+    public void setEpicId(int epicId) {
+        System.out.println("setEpicId: " + epicId);
+        this.epicId = epicId;
     }
 
     public String getEpicName(ArrayList<Epic> epics) {
@@ -32,13 +46,24 @@ public class Subtask extends Task {
 
     public static Subtask fromCsv(String csvLine) {
         String[] fields = csvLine.split(",");
+
         int id = Integer.parseInt(fields[0]);
         String name = fields[2];
-        TaskStatus status = TaskStatus.valueOf(fields[3]);
-        String description = fields[4];
-        int epicId = Integer.parseInt(fields[5]);
-        Duration duration = fields[6].isEmpty() ? null : Duration.ofMinutes(Long.parseLong(fields[6]));
-        LocalDateTime startTime = fields[7].isEmpty() ? null : LocalDateTime.parse(fields[7]);
+        String description = fields[3];
+
+        TaskStatus status = (fields[4] != null && !fields[4].trim().isEmpty() && !"null".equalsIgnoreCase(fields[4].trim()))
+                ? TaskStatus.valueOf(fields[4].trim())
+                : TaskStatus.NEW;
+
+        LocalDateTime startTime = (fields.length > 5 && !fields[5].isEmpty() && !"null".equals(fields[5].trim()))
+                ? LocalDateTime.parse(fields[5].trim())
+                : null;
+
+        Duration duration = (fields.length > 6 && !fields[6].isEmpty())
+                ? Duration.ofMinutes(Long.parseLong(fields[6].trim()))
+                : null;
+
+        int epicId = Integer.parseInt(fields[7]);
 
         Subtask subtask = new Subtask(id, name, description, status, epicId);
         subtask.setDuration(duration);
@@ -48,12 +73,11 @@ public class Subtask extends Task {
 
     @Override
     public String toCsv() {
-        String durationStr = (duration != null) ? String.valueOf(duration.toMinutes()) : "";
-        String startTimeStr = (startTime != null) ? startTime.toString() : "";
-        return String.format("%d,SUBTASK,%s,%s,%s,%d,%s,%s", id, taskName, taskStatus, taskDescription, epicId, durationStr, startTimeStr);
+        return super.toCsv() + epicId;
     }
 
-    public TaskType getTaskType() {
+    @Override
+    public TaskType getType() {
         return TaskType.SUBTASK;
     }
 
@@ -66,5 +90,19 @@ public class Subtask extends Task {
                 ", epicId=" + epicId +
                 " , taskStatus = " + this.getTaskStatus() +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Subtask subtask = (Subtask) o;
+        return epicId == subtask.epicId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), epicId);
     }
 }
